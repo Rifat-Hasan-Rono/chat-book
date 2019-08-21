@@ -2518,6 +2518,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2708,15 +2709,34 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    cancelRequest: function cancelRequest(id) {
+    removeFriend: function removeFriend(id) {
       var _this11 = this;
+
+      axios.post("/api/auth/remove-friend", {
+        token: localStorage.getItem("access_token"),
+        id: id
+      }).then(function (response) {
+        //   this.changeTab('friends_request')
+        _this11.getFriends();
+
+        Toast.fire({
+          type: response.data.type,
+          title: response.data.title
+        });
+        console.log(response.data);
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    cancelRequest: function cancelRequest(id) {
+      var _this12 = this;
 
       axios.post("/api/auth/cancel-request", {
         token: localStorage.getItem("access_token"),
         id: id
       }).then(function (response) {
         //   this.changeTab('friends_request')
-        _this11.sentRequest();
+        _this12.sentRequest();
 
         Toast.fire({
           type: response.data.type,
@@ -2728,14 +2748,14 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     deleteRequest: function deleteRequest(id) {
-      var _this12 = this;
+      var _this13 = this;
 
       axios.post("/api/auth/delete-request", {
         token: localStorage.getItem("access_token"),
         id: id
       }).then(function (response) {
         //   this.changeTab('friends_request')
-        _this12.getRequest();
+        _this13.getRequest();
 
         Toast.fire({
           type: response.data.type,
@@ -52364,6 +52384,21 @@ var render = function() {
                                         }
                                       },
                                       [_vm._v("Delete")]
+                                    )
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _vm.friendListHeader == "Friends"
+                                  ? _c(
+                                      "a",
+                                      {
+                                        staticClass: "dropdown-item",
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.removeFriend(value.id)
+                                          }
+                                        }
+                                      },
+                                      [_vm._v("Remove Friend")]
                                     )
                                   : _vm._e(),
                                 _vm._v(" "),

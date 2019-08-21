@@ -284,6 +284,7 @@
                                             <a @click="confirmFriend(value.id)" v-if="friendListHeader == 'Receive Requests'" class="dropdown-item">Confirm Friend</a>
                                             <a @click="cancelRequest(value.id)" v-if="friendListHeader == 'Send Requests'" class="dropdown-item">Cancel Request</a>
                                             <a @click="deleteRequest(value.id)" v-if="friendListHeader == 'Receive Requests'" class="dropdown-item">Delete</a>
+                                            <a @click="removeFriend(value.id)" v-if="friendListHeader == 'Friends'" class="dropdown-item">Remove Friend</a>
                                             <a @click="friendProfile(value.id)" data-navigation-target="contact-information" class="dropdown-item">Profile</a>
                                         </div>
                                     </div>
@@ -869,6 +870,23 @@ export default {
         .then(response => {
         //   this.changeTab('friends_request')
           this.getRequest()
+          Toast.fire({
+              type: response.data.type,
+              title: response.data.title
+            });
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    removeFriend(id) {
+      axios
+        .post("/api/auth/remove-friend" , {token: localStorage.getItem("access_token"),
+        id: id})
+        .then(response => {
+        //   this.changeTab('friends_request')
+          this.getFriends()
           Toast.fire({
               type: response.data.type,
               title: response.data.title

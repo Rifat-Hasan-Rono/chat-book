@@ -49,10 +49,10 @@ class FriendController extends Controller
             $receiver->friend_list = json_encode($receiver_friend_list);
         }
         $get_request = array_diff(json_decode($receiver->get_request), [$sender->id]);
-        if (!$get_request) {
-            $receiver->get_request = Null;
-        } else {
-            $receiver->get_request = json_encode($get_request);
+        $get_request_values = array_values($get_request);
+        $receiver->get_request = Null;
+        if ($get_request_values) {
+            $receiver->get_request = json_encode($get_request_values);
         }
         $receiver->save();
 
@@ -63,14 +63,40 @@ class FriendController extends Controller
             $sender->friend_list = json_encode($sender_friend_list);
         }
         $sent_request = array_diff(json_decode($sender->sent_request), [$receiver->id]);
-        if (!$sent_request) {
-            $sender->sent_request = Null;
-        } else {
-            $sender->sent_request = json_encode($sent_request);
+        $sent_request_values = array_values($sent_request);
+        $sender->sent_request = Null;
+        if ($sent_request_values) {
+            $sender->sent_request = json_encode($sent_request_values);
         }
         $sender->save();
 
         return response()->json(['type' => 'success', 'title' => 'Friend request accepted']);
+    }
+
+    /**
+     * Remove from friend list.
+     */
+    public function removeFriend(Request $request)
+    {
+        $sender = auth()->user();
+        $sender_friend_list = array_diff(json_decode($sender->friend_list), [$request->id]);
+        $sender_friend_list_values = array_values($sender_friend_list);
+        $sender->friend_list = Null;
+        if ($sender_friend_list_values) {
+            $sender->friend_list = json_encode($sender_friend_list_values);
+        }
+        $sender->save();
+
+        $receiver = User::find($request->id);
+        $receiver_friend_list = array_diff(json_decode($receiver->friend_list), [$sender->id]);
+        $receiver_friend_list_values = array_values($receiver_friend_list);
+        $receiver->friend_list = Null;
+        if ($receiver_friend_list_values) {
+            $receiver->friend_list = json_encode($receiver_friend_list_values);
+        }
+        $receiver->save();
+
+        return response()->json(['type' => 'success', 'title' => 'Removed friend successfully']);
     }
 
     /**
@@ -142,19 +168,19 @@ class FriendController extends Controller
     {
         $sender = auth()->user();
         $sent_request = array_diff(json_decode($sender->sent_request), [$request->id]);
-        if (!$sent_request) {
-            $sender->sent_request = Null;
-        } else {
-            $sender->sent_request = json_encode($sent_request);
+        $sent_request_values = array_values($sent_request);
+        $sender->sent_request = Null;
+        if ($sent_request_values) {
+            $sender->sent_request = json_encode($sent_request_values);
         }
         $sender->save();
 
         $receiver = User::find($request->id);
         $get_request = array_diff(json_decode($receiver->get_request), [$sender->id]);
-        if (!$get_request) {
-            $receiver->get_request = Null;
-        } else {
-            $receiver->get_request = json_encode($get_request);
+        $get_request_values = array_values($get_request);
+        $receiver->get_request = Null;
+        if ($get_request_values) {
+            $receiver->get_request = json_encode($get_request_values);
         }
         $receiver->save();
 
@@ -168,19 +194,19 @@ class FriendController extends Controller
     {
         $receiver = auth()->user();
         $get_request = array_diff(json_decode($receiver->get_request), [$request->id]);
-        if (!$get_request) {
-            $receiver->get_request = Null;
-        } else {
-            $receiver->get_request = json_encode($get_request);
+        $get_request_values = array_values($get_request);
+        $receiver->get_request = Null;
+        if ($get_request_values) {
+            $receiver->get_request = json_encode($get_request_values);
         }
         $receiver->save();
 
         $sender = User::find($request->id);
         $sent_request = array_diff(json_decode($sender->sent_request), [$receiver->id]);
-        if (!$sent_request) {
-            $sender->sent_request = Null;
-        } else {
-            $sender->sent_request = json_encode($sent_request);
+        $sent_request_values = array_values($sent_request);
+        $sender->sent_request = Null;
+        if ($sent_request_values) {
+            $sender->sent_request = json_encode($sent_request_values);
         }
         $sender->save();
 

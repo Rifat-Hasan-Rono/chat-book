@@ -27,6 +27,7 @@ Route::group(['middleware' => ['jwt.auth'], 'prefix' => 'auth'], function () {
     Route::post('get-friends', 'FriendController@getFriends');
     Route::post('add-friend', 'FriendController@addFriend');
     Route::post('confirm-friend', 'FriendController@confirmFriend');
+    Route::post('remove-friend', 'FriendController@removeFriend');
     Route::post('get-request', 'FriendController@getRequest');
     Route::post('sent-request', 'FriendController@sentRequest');
     Route::post('cancel-request', 'FriendController@cancelRequest');
