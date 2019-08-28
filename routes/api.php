@@ -19,6 +19,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('logout', 'Auth\AuthController@logout');
     Route::post('refresh', 'Auth\AuthController@refresh');
     Route::post('me', 'Auth\AuthController@me');
+    Route::post('update-profile', 'Auth\AuthController@updateProfile');
 });
 
 Route::group(['middleware' => ['jwt.auth'], 'prefix' => 'auth'], function () {
@@ -32,7 +33,10 @@ Route::group(['middleware' => ['jwt.auth'], 'prefix' => 'auth'], function () {
     Route::post('sent-request', 'FriendController@sentRequest');
     Route::post('cancel-request', 'FriendController@cancelRequest');
     Route::post('delete-request', 'FriendController@deleteRequest');
+    Route::post('get-profile', 'FriendController@getProfile');
 
     //--------------Handle chat request    
-    Route::post('send-message', 'ChatController@store');
+    Route::post('conversation-list', 'ChatController@conversationList');
+    Route::post('get-message', 'ChatController@getMessage');
+    Route::post('send-message', 'ChatController@sendMessage');
 });

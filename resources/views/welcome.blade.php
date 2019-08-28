@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Soho - Chat and Discussion Platform</title>
+    <title>ChatBook - Chat and Discussion Platform</title>
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('dist/media/img/favicon.png') }}" type="image/png">
@@ -29,7 +29,7 @@
     <script src="{{ asset('dist/js/popper.min.js') }}"></script>
     <script src="{{ asset('dist/js/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('dist/js/soho.min.js') }}"></script>
-    <script src="{{ asset('dist/js/examples.js') }}"></script>
+    <!-- <script src="{{ asset('dist/js/examples.js') }}"></script> -->
     <script>
         $("body").on('DOMSubtreeModified', "#app", function() {
             var current_path = window.location.pathname;

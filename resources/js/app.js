@@ -11,11 +11,15 @@ import VueRouter from 'vue-router';
 import VueAxios from 'vue-axios';
 import axios from 'axios';
 import VueChatScroll from 'vue-chat-scroll'
+import moment from 'moment'
 Vue.use(VueRouter, VueAxios, axios);
 Vue.use(VueChatScroll);
-
 import Swal from 'sweetalert2'
 window.Swal = Swal
+
+Vue.filter('date', function (created) {
+    return moment(created).format('MMMM Do YYYY, h:mm:ss a');
+})
 
 const Toast = Swal.mixin({
     toast: true,

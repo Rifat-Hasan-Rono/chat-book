@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Message extends Model
+class Conversation extends Model
 {
     protected $fillable = [
-        'message', 'conversation_id', 'user_id',
+        'last_message', 'sender_id', 'receiver_id',
     ];
 
     public function user()

@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
-use phpDocumentor\Reflection\Types\Null_;
+use DB;
 
 class FriendController extends Controller
 {
-
     /**
      * Sent friend request.
      */
@@ -22,7 +21,6 @@ class FriendController extends Controller
             $sender->sent_request = json_encode($sent_request);
         }
         $sender->save();
-
         $receiver = User::find($request->id);
         if (!$receiver->get_request) {
             $receiver->get_request = json_encode([$sender->id]);
@@ -33,7 +31,6 @@ class FriendController extends Controller
         $receiver->save();
         return response()->json(['type' => 'success', 'title' => 'Friend request sent successfully']);
     }
-
     /**
      * Confirm friend request.
      */
@@ -41,7 +38,6 @@ class FriendController extends Controller
     {
         $receiver = auth()->user();
         $sender = User::find($request->id);
-
         if (!$receiver->friend_list) {
             $receiver->friend_list = json_encode([$request->id]);
         } else {
@@ -55,7 +51,6 @@ class FriendController extends Controller
             $receiver->get_request = json_encode($get_request_values);
         }
         $receiver->save();
-
         if (!$sender->friend_list) {
             $sender->friend_list = json_encode([$receiver->id]);
         } else {
@@ -69,10 +64,8 @@ class FriendController extends Controller
             $sender->sent_request = json_encode($sent_request_values);
         }
         $sender->save();
-
         return response()->json(['type' => 'success', 'title' => 'Friend request accepted']);
     }
-
     /**
      * Remove from friend list.
      */
@@ -86,7 +79,6 @@ class FriendController extends Controller
             $sender->friend_list = json_encode($sender_friend_list_values);
         }
         $sender->save();
-
         $receiver = User::find($request->id);
         $receiver_friend_list = array_diff(json_decode($receiver->friend_list), [$sender->id]);
         $receiver_friend_list_values = array_values($receiver_friend_list);
@@ -95,10 +87,8 @@ class FriendController extends Controller
             $receiver->friend_list = json_encode($receiver_friend_list_values);
         }
         $receiver->save();
-
         return response()->json(['type' => 'success', 'title' => 'Removed friend successfully']);
     }
-
     /**
      * Get all whom get friend request by user.
      */
@@ -112,7 +102,6 @@ class FriendController extends Controller
         }
         return response()->json($users);
     }
-
     /**
      * Get all whom sent friend request to user.
      */
@@ -126,7 +115,6 @@ class FriendController extends Controller
         }
         return response()->json($users);
     }
-
     /**
      * Get all user whom are not connected.
      */
@@ -143,10 +131,9 @@ class FriendController extends Controller
         if ($user->get_request) {
             $except_users = array_merge($except_users, json_decode($user->get_request));
         }
-        $users = User::whereNotIn('id', $except_users)->orderBy('created_at', 'desc')->get();
+        $users = User::whereNotIn('id', $except_users)->orderBy('created_at', 'desc')->where('type', 0)->get();
         return response()->json($users);
     }
-
     /**
      * Get all friends whom are connected.
      */
@@ -160,7 +147,6 @@ class FriendController extends Controller
         }
         return response()->json($friends);
     }
-
     /**
      * Cancel friend request sent to an user.
      */
@@ -174,7 +160,6 @@ class FriendController extends Controller
             $sender->sent_request = json_encode($sent_request_values);
         }
         $sender->save();
-
         $receiver = User::find($request->id);
         $get_request = array_diff(json_decode($receiver->get_request), [$sender->id]);
         $get_request_values = array_values($get_request);
@@ -183,10 +168,8 @@ class FriendController extends Controller
             $receiver->get_request = json_encode($get_request_values);
         }
         $receiver->save();
-
         return response()->json(['type' => 'success', 'title' => 'Friend request cancelled']);
     }
-
     /**
      * Delete friend request sent by an user.
      */
@@ -200,7 +183,6 @@ class FriendController extends Controller
             $receiver->get_request = json_encode($get_request_values);
         }
         $receiver->save();
-
         $sender = User::find($request->id);
         $sent_request = array_diff(json_decode($sender->sent_request), [$receiver->id]);
         $sent_request_values = array_values($sent_request);
@@ -209,7 +191,19 @@ class FriendController extends Controller
             $sender->sent_request = json_encode($sent_request_values);
         }
         $sender->save();
-
         return response()->json(['type' => 'success', 'title' => 'Friend request deleted']);
+    }
+
+    /**
+     * Get friend/user profile.
+     */
+    public function getProfile(Request $request)
+    {
+        $id = $request->id;
+        if ($id == 0) {
+            $id = auth()->user()->id;
+        }
+        $user = User::with('social')->find($id);
+        return response()->json($user);
     }
 }
