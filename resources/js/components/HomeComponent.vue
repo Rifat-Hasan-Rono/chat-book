@@ -428,7 +428,7 @@
                             <span v-else class="avatar-title bg-info rounded-circle">{{friendProfile.first_name.charAt(0)}}{{friendProfile.last_name.charAt(0)}}</span>
                         </figure>
                         <h5 class="text-primary">{{friendProfile.first_name}} {{friendProfile.last_name}}</h5>
-                        <p class="text-muted">Last seen: Today</p>
+                        <p class="text-muted">Last seen: {{friendProfile.last_seen | date}}</p>
                     </div>
                     <hr>
                     <div class="pl-4 pr-4">

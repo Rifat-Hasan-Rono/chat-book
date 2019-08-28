@@ -19,12 +19,15 @@ class CreateUsersTable extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('mobile')->unique();
+            $table->string('city')->nullable();
+            $table->string('picture')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->tinyInteger('type')->default(0)->comment = "0 = public, 1= private";
             $table->text('friend_list')->nullable();
             $table->text('sent_request')->nullable();
             $table->text('get_request')->nullable();
+            $table->timestamp('last_seen');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -1738,56 +1738,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log("Component mounted.");
@@ -70477,245 +70427,106 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "sidebar", attrs: { id: "friends" } }, [
-    _c("header", [
-      _c("span", [_vm._v(_vm._s(_vm.friendListHeader))]),
-      _vm._v(" "),
-      _c("ul", { staticClass: "list-inline" }, [
-        _vm.friendListHeader == "Receive Requests"
-          ? _c("li", { staticClass: "list-inline-item" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-light",
-                  attrs: { "data-toggle": "tooltip", title: "Send Request" },
-                  on: {
-                    click: function($event) {
-                      return _vm.sentRequest()
-                    }
-                  }
-                },
-                [
-                  _c("i", {
-                    staticClass: "fa fa-user-circle-o",
-                    attrs: { "aria-hidden": "true" }
-                  })
-                ]
-              )
-            ])
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.friendListHeader != "Receive Requests"
-          ? _c("li", { staticClass: "list-inline-item" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-light",
-                  attrs: { "data-toggle": "tooltip", title: "Receive Request" },
-                  on: {
-                    click: function($event) {
-                      return _vm.getRequest()
-                    }
-                  }
-                },
-                [
-                  _c("i", {
-                    staticClass: "fa fa-user-secret",
-                    attrs: { "aria-hidden": "true" }
-                  })
-                ]
-              )
-            ])
-          : _vm._e(),
-        _vm._v(" "),
-        _vm._m(0),
-        _vm._v(" "),
-        _vm._m(1)
-      ])
-    ]),
-    _vm._v(" "),
-    _vm._m(2),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "sidebar-body" },
-      _vm._l(_vm.friendList, function(value) {
-        return _c(
-          "ul",
-          { key: value.index, staticClass: "list-group list-group-flush" },
-          [
-            _c("li", { staticClass: "list-group-item" }, [
-              _vm._m(3, true),
-              _vm._v(" "),
-              _c("div", { staticClass: "users-list-body" }, [
-                _c("h5", [
-                  _vm._v(
-                    _vm._s(value.first_name) + " " + _vm._s(value.last_name)
-                  )
-                ]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Lorem ipsum dolor sitsdc sdcsdc sdcsdcs")]),
-                _vm._v(" "),
-                _c("div", { staticClass: "users-list-action action-toggle" }, [
-                  _c("div", { staticClass: "dropdown" }, [
-                    _vm._m(4, true),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "dropdown-menu dropdown-menu-right" },
-                      [
-                        _vm.friendListHeader == "Find Friends"
-                          ? _c(
-                              "a",
-                              {
-                                staticClass: "dropdown-item",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.addFriend(value.id)
-                                  }
-                                }
-                              },
-                              [_vm._v("Add Friend")]
-                            )
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _vm.friendListHeader == "Receive Requests"
-                          ? _c(
-                              "a",
-                              {
-                                staticClass: "dropdown-item",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.confirmFriend(value.id)
-                                  }
-                                }
-                              },
-                              [_vm._v("Confirm Friend")]
-                            )
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _vm.friendListHeader == "Send Requests"
-                          ? _c(
-                              "a",
-                              {
-                                staticClass: "dropdown-item",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.cancelRequest(value.id)
-                                  }
-                                }
-                              },
-                              [_vm._v("Cancel Request")]
-                            )
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _vm.friendListHeader == "Receive Requests"
-                          ? _c(
-                              "a",
-                              {
-                                staticClass: "dropdown-item",
-                                on: {
-                                  click: function($event) {
-                                    return _vm.deleteRequest(value.id)
-                                  }
-                                }
-                              },
-                              [_vm._v("Delete")]
-                            )
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _c(
-                          "a",
-                          {
-                            staticClass: "dropdown-item",
-                            attrs: {
-                              "data-navigation-target": "contact-information"
-                            },
-                            on: {
-                              click: function($event) {
-                                return _vm.friendProfile(value.id)
-                              }
-                            }
-                          },
-                          [_vm._v("Profile")]
-                        )
-                      ]
-                    )
-                  ])
-                ])
-              ])
-            ])
-          ]
-        )
-      }),
-      0
-    )
-  ])
+  return _vm._m(0)
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", { staticClass: "list-inline-item" }, [
-      _c(
-        "a",
-        {
-          staticClass: "btn btn-light",
-          attrs: { "data-toggle": "tooltip", title: "Add Friend" }
-        },
-        [
-          _c("i", {
-            staticClass: "fa fa-external-link",
-            attrs: { "aria-hidden": "true" }
-          })
-        ]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", { staticClass: "list-inline-item d-lg-none d-sm-block" }, [
-      _c(
-        "a",
-        { staticClass: "btn btn-light sidebar-close", attrs: { href: "#" } },
-        [_c("i", { staticClass: "ti-close" })]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("form", { attrs: { action: "#" } }, [
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", placeholder: "Search chat" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("figure", { staticClass: "avatar" }, [
-        _c("img", {
-          staticClass: "rounded-circle",
-          attrs: { src: "dist/media/img/women_avatar5.jpg" }
-        })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("a", { attrs: { "data-toggle": "dropdown", href: "#" } }, [
-      _c("i", { staticClass: "ti-more" })
-    ])
+    return _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "addFriends",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-dialog-centered modal-dialog-zoom",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c("h5", { staticClass: "modal-title" }, [
+                  _c("i", { staticClass: "ti-user" }),
+                  _vm._v(" Add Friends\n        ")
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: {
+                      type: "button",
+                      "data-dismiss": "modal",
+                      "aria-label": "Close"
+                    }
+                  },
+                  [_c("i", { staticClass: "ti-close" })]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "alert alert-info" }, [
+                  _vm._v("Send invitations to friends.")
+                ]),
+                _vm._v(" "),
+                _c("form", [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c(
+                      "label",
+                      {
+                        staticClass: "col-form-label",
+                        attrs: { for: "emails" }
+                      },
+                      [_vm._v("Email addresses")]
+                    ),
+                    _vm._v(" "),
+                    _c("input", {
+                      staticClass: "form-control",
+                      attrs: { type: "text", id: "emails" }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group" }, [
+                    _c(
+                      "label",
+                      {
+                        staticClass: "col-form-label",
+                        attrs: { for: "message" }
+                      },
+                      [_vm._v("Invitation message")]
+                    ),
+                    _vm._v(" "),
+                    _c("textarea", {
+                      staticClass: "form-control",
+                      attrs: { id: "message" }
+                    })
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  { staticClass: "btn btn-primary", attrs: { type: "button" } },
+                  [_vm._v("Submit")]
+                )
+              ])
+            ])
+          ]
+        )
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -71598,7 +71409,10 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("p", { staticClass: "text-muted" }, [
-                      _vm._v("Last seen: Today")
+                      _vm._v(
+                        "Last seen: " +
+                          _vm._s(_vm._f("date")(_vm.friendProfile.last_seen))
+                      )
                     ])
                   ]),
                   _vm._v(" "),

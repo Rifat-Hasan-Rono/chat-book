@@ -55,7 +55,7 @@ class ChatController extends Controller
         if ($request->conv_id == 0) {
             $conversation_id = Conversation::create(['last_message' => $request->message, 'sender_id' => $id, 'receiver_id' => $request->receiver_id])->id;
         } else {
-            $conversation_id = Conversation::updateOrCreate(['id' => $request->conv_id], ['last_message' => $request->message])->id;
+            $conversation_id = Conversation::update(['id' => $request->conv_id], ['last_message' => $request->message])->id;
         }
         $message = new Message();
         $message->message = $request->message;
