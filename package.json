@@ -31,6 +31,7 @@
         "vue-chat-scroll": "^1.3.5",
         "vue-moment": "^4.0.0",
         "vue-moments-ago": "^0.2.0",
-        "vue-router": "^3.1.2"
+        "vue-router": "^3.1.2",
+        "vue2-dropzone": "^3.6.0"
     }
 }

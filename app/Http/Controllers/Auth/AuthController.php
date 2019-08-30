@@ -130,13 +130,13 @@ class AuthController extends Controller
         $user = auth()->user();
 
         if ($request->picture) {
-            if (!is_dir(PROFILE_PICTURE)) {
-                mkdir(PROFILE_PICTURE, 0777, true);
+            if (!is_dir(USER_MEDIA . $user->id)) {
+                mkdir(USER_MEDIA . $user->id, 0777, true);
             }
-            $target_dir = PROFILE_PICTURE;
+            $target_dir = USER_MEDIA . $user->id . "/";
 
             if (!empty($user->image)) {
-                unlink($target_dir . $user->image);
+                unlink($target_dir . $user->id . $user->image);
             }
 
             $unique_name = time() . uniqid() . '.jpg';
@@ -144,7 +144,7 @@ class AuthController extends Controller
             $data = str_replace('data:image/jpeg;base64,', '', $request->picture);
             $data = base64_decode($data);
             file_put_contents($target_file, $data);
-            User::where('id', $user->id)->update(['picture' => $unique_name]);
+            $user = User::where('id', $user->id)->update(['picture' => $unique_name]);
             return response()->json(['type' => 'success', 'title' => 'Profile picture updated successfully']);
         } else {
             $validator = \Validator::make($request->data, [
@@ -187,5 +187,51 @@ class AuthController extends Controller
             ]);
             return response()->json(['type' => 'success', 'title' => 'Profile updated successfully']);
         }
+    }
+
+    /**
+     * Store user media file.
+     */
+    public function storeMedia(Request $request)
+    {
+        $user = auth()->user();
+        if (!is_dir(USER_MEDIA . $user->id)) {
+            mkdir(USER_MEDIA . $user->id, 0777, true);
+        }
+        $target_dir = USER_MEDIA . $user->id . "/";
+        $image = $request->file('file');
+        $imageName = $image->getClientOriginalName();
+        $image->move($target_dir, $imageName);
+
+        $social = Social::where('user_id', $user->id)->first();
+        if (!$social->media) {
+            $social->media = json_encode([$imageName]);
+        } else {
+            $social_media = array_merge([$imageName], json_decode($social->media));
+            $social->media = json_encode($social_media);
+        }
+        $social->save();
+        return response()->json(['success' => 'Updated']);
+    }
+
+    /**
+     * Remove the specified file from media.
+     */
+    public function removeMedia(Request $request)
+    {
+        $user = auth()->user();
+        $social = Social::where('user_id', $user->id)->first();
+        $social_media = array_diff(json_decode($social->media), [$request->file]);
+        $social_media_values = array_values($social_media);
+        $social->media = Null;
+        if ($social_media_values) {
+            $social->media = json_encode($social_media_values);
+        }
+        $social->save();
+        $path = USER_MEDIA . $user->id . "/" . $request->file;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        return response()->json(['type' => 'success', 'title' => 'Removed successfully']);
     }
 }

@@ -30,7 +30,6 @@ const Toast = Swal.mixin({
 window.Toast = Toast
 
 // import App from './components/App.vue';
-Vue.component('friend-component', require('./components/FriendComponent.vue'));
 
 import LoginComponent from './components/LoginComponent.vue';
 import RegisterComponent from './components/RegisterComponent.vue';

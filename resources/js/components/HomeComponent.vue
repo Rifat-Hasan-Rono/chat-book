@@ -152,7 +152,7 @@
                             </a>
                         </li>
                         <li class="list-inline-item">
-                            <a class="btn btn-light" v-if="friendListHeader == 'Find Friends'" data-toggle="tooltip" title="Send Invitation">
+                            <a class="btn btn-light" @click="invite()" v-if="friendListHeader == 'Find Friends'" data-toggle="tooltip" title="Send Invitation">
                                 <i class="fa fa-external-link" aria-hidden="true"></i>
                             </a>
                         </li>
@@ -409,385 +409,20 @@
         <!-- ./ chat -->
 
         <!-- about -->
-        <div class="sidebar-group">
-            <div id="contact-information" class="sidebar" :class="{ 'active' : friendProfile != ''}">
-                <header>
-                    <span>About</span>
-                    <ul class="list-inline">
-                        <li class="list-inline-item">
-                            <a @click="friendProfile = ''" class="btn btn-light sidebar-close">
-                                <i class="ti-close"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </header>
-                <div class="sidebar-body" v-if="friendProfile">
-                    <div class="pl-4 pr-4 text-center">
-                        <figure class="avatar avatar-state-danger avatar-xl mb-4">
-                            <img v-if="friendProfile.picture" v-bind:src="'public/profile-picture/' + friendProfile.picture" class="rounded-circle">
-                            <span v-else class="avatar-title bg-info rounded-circle">{{friendProfile.first_name.charAt(0)}}{{friendProfile.last_name.charAt(0)}}</span>
-                        </figure>
-                        <h5 class="text-primary">{{friendProfile.first_name}} {{friendProfile.last_name}}</h5>
-                        <p class="text-muted">Last seen: {{friendProfile.last_seen | date}}</p>
-                    </div>
-                    <hr>
-                    <div class="pl-4 pr-4">
-                        <h6>About</h6>
-                        <p class="text-muted">{{friendProfile.social.about}}</p>
-                    </div>
-                    <hr>
-                    <div class="pl-4 pr-4">
-                        <h6>Mobile</h6>
-                        <p class="text-muted">{{friendProfile.mobile}}</p>
-                    </div>
-                    <hr>
-                    <div class="pl-4 pr-4">
-                        <h6>Media</h6>
-                        <div class="files">
-                            <ul class="list-inline">
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <figure class="avatar avatar-lg">
-                                        <span class="avatar-title bg-warning">
-                                            <i class="fa fa-file-pdf-o"></i>
-                                        </span>
-                                        </figure>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <figure class="avatar avatar-lg">
-                                            <img src="dist/media/img/women_avatar1.jpg">
-                                        </figure>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <figure class="avatar avatar-lg">
-                                            <img src="dist/media/img/women_avatar3.jpg">
-                                        </figure>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <figure class="avatar avatar-lg">
-                                            <img src="dist/media/img/women_avatar4.jpg">
-                                        </figure>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <figure class="avatar avatar-lg">
-                                        <span class="avatar-title bg-success">
-                                            <i class="fa fa-file-excel-o"></i>
-                                        </span>
-                                        </figure>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#">
-                                        <figure class="avatar avatar-lg">
-                                        <span class="avatar-title bg-info">
-                                            <i class="fa fa-file-text-o"></i>
-                                        </span>
-                                        </figure>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="pl-4 pr-4">
-                        <h6>City</h6>
-                        <p class="text-muted">{{friendProfile.city}}</p>
-                    </div>
-                    <hr>
-                    <div class="pl-4 pr-4">
-                        <h6>Website</h6>
-                        <p>
-                            <a :href="'http://'+friendProfile.social.website">{{friendProfile.social.website}}</a>
-                        </p>
-                    </div>
-                    <hr>
-                    <div class="pl-4 pr-4">
-                        <h6>Social Links</h6>
-                        <ul class="list-inline social-links">
-                            <li class="list-inline-item" v-if="friendProfile.social.facebook">
-                                <a :href="'http://'+friendProfile.social.facebook" class="btn btn-sm btn-floating btn-facebook">
-                                    <i class="fa fa-facebook"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item" v-if="friendProfile.social.twitter">
-                                <a :href="'http://'+friendProfile.social.twitter" class="btn btn-sm btn-floating btn-twitter">
-                                    <i class="fa fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item" v-if="friendProfile.social.dribbble">
-                                <a :href="'http://'+friendProfile.social.dribbble" class="btn btn-sm btn-floating btn-dribbble">
-                                    <i class="fa fa-dribbble"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item" v-if="friendProfile.social.whatsapp">
-                                <a :href="'http://'+friendProfile.social.whatsapp" class="btn btn-sm btn-floating btn-whatsapp">
-                                    <i class="fa fa-whatsapp"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item" v-if="friendProfile.social.linkedin">
-                                <a :href="'http://'+friendProfile.social.linkedin" class="btn btn-sm btn-floating btn-linkedin">
-                                    <i class="fa fa-linkedin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item" v-if="friendProfile.social.google">
-                                <a :href="'http://'+friendProfile.social.google" class="btn btn-sm btn-floating btn-google">
-                                    <i class="fa fa-google"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item" v-if="friendProfile.social.youtube">
-                                <a :href="'http://'+friendProfile.social.youtube" class="btn btn-sm btn-floating btn-youtube">
-                                    <i class="fa fa-youtube"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item" v-if="friendProfile.social.instagram">
-                                <a :href="'http://'+friendProfile.social.instagram" class="btn btn-sm btn-floating btn-instagram">
-                                    <i class="fa fa-instagram"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <hr>
-                    <div class="pl-4 pr-4">
-                        <div class="form-group">
-                            <div class="form-item custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="customSwitch11">
-                                <label class="custom-control-label" for="customSwitch11">Block</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-item custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" checked="" id="customSwitch12">
-                                <label class="custom-control-label" for="customSwitch12">Mute</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-item custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="customSwitch13">
-                                <label class="custom-control-label" for="customSwitch13">Get notification</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ProfileComponent :friendProfile.sync="friendProfile"></ProfileComponent>
         <!-- ./ about -->
 
     </div>
     <!-- ./ content -->
 
     <!-- edit profile modal -->
-    <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-zoom" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="ti-pencil"></i> Profile Edit
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <i class="ti-close"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" style="cursor: pointer;" data-toggle="tab" @click="tab = 'personal'" role="tab" aria-controls="personal" aria-selected="true">Personal</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" style="cursor: pointer;" data-toggle="tab" @click="tab = 'about'" role="tab" aria-controls="about" aria-selected="false">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" style="cursor: pointer;" data-toggle="tab" @click="tab = 'social-links'" role="tab" aria-controls="social-links" aria-selected="false">Social Links</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content"  v-if="userProfile">
-                        <div class="tab-pane" :class="{ 'show active' : tab == 'personal'}" id="personal" role="tabpanel">
-                            <form>
-                                <div class="form-group">
-                                    <label for="first_name" class="col-form-label">First Name</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="ti-user"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" v-model="userProfile.first_name" id="first_name">
-                                    </div>
-                                </div>
-                                 <div class="form-group">
-                                    <label for="last_name" class="col-form-label">Last Name</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="ti-user"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" v-model="userProfile.last_name" id="last_name">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Avatar</label>
-                                    <div class="d-flex align-items-center">
-                                        <div>
-                                            <figure class="avatar mr-3 item-rtl" >
-                                                <img v-if="userProfile.picture" v-bind:src="'public/profile-picture/' + userProfile.picture" class="rounded-circle">
-                                                <span v-else class="avatar-title bg-info rounded-circle">{{userProfile.first_name.charAt(0)}}{{userProfile.last_name.charAt(0)}}</span>
-                                            </figure>
-                                        </div>
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" @change="uploadPicture(this)" id="customFile">
-                                            <label class="custom-file-label" for="customFile">Choose file</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="city" class="col-form-label">City</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="ti-map-alt"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="City, Country" v-model="userProfile.city" id="city">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="mobile" class="col-form-label">Mobile</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="ti-mobile"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" id="mobile" v-model="userProfile.mobile">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="website" class="col-form-label">Website</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="ti-link"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Website" id="website" v-model="userProfile.social.website">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="tab-pane" :class="{ 'show active' : tab == 'about'}" id="about" role="tabpanel">
-                            <form>
-                                <div class="form-group">
-                                    <label for="about-text" class="col-form-label">Write a few words that describe you</label>
-                                    <textarea class="form-control" id="about-text" v-model="userProfile.social.about"></textarea>
-                                </div>
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" v-model="userProfile.type" :checked="userProfile.type == 1" id="type">
-                                    <label class="custom-control-label" for="type">Make account private</label>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="tab-pane" :class="{ 'show active' : tab == 'social-links'}" id="social-links" role="tabpanel">
-                            <form>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                        <span class="input-group-text bg-facebook">
-                                            <i class="ti-facebook"></i>
-                                        </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Username" v-model="userProfile.social.facebook">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                        <span class="input-group-text bg-twitter">
-                                            <i class="ti-twitter"></i>
-                                        </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Username" v-model="userProfile.social.twitter">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                        <span class="input-group-text bg-instagram">
-                                            <i class="ti-instagram"></i>
-                                        </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Username" v-model="userProfile.social.instagram">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                        <span class="input-group-text bg-linkedin">
-                                            <i class="ti-linkedin"></i>
-                                        </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Username" v-model="userProfile.social.linkedin">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                        <span class="input-group-text bg-dribbble">
-                                            <i class="ti-dribbble"></i>
-                                        </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Username" v-model="userProfile.social.dribbble">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                        <span class="input-group-text bg-youtube">
-                                            <i class="ti-youtube"></i>
-                                        </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Username" v-model="userProfile.social.youtube">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                        <span class="input-group-text bg-google">
-                                            <i class="ti-google"></i>
-                                        </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Username" v-model="userProfile.social.google">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                        <span class="input-group-text bg-whatsapp">
-                                            <i class="fa fa-whatsapp"></i>
-                                        </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Username" v-model="userProfile.social.whatsapp">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" @click="updateProfile()" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <UserComponent :userProfile.sync="userProfile" :tab.sync="tab"></UserComponent>    
     <!-- ./ edit profile modal -->
+    
+    <!-- add friends modal -->
+    <InviteComponent></InviteComponent>
+    <!-- ./ add friends modal -->
+
 
 </div>
 <!-- ./ layout -->
@@ -796,6 +431,9 @@
 import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'
 import VueMomentsAgo from 'vue-moments-ago'
+import InviteComponent from './InviteComponent.vue'
+import ProfileComponent from './ProfileComponent.vue'
+import UserComponent from './UserComponent.vue'
 export default {
     name: 'laravel-echo',
     data() {
@@ -824,7 +462,10 @@ export default {
 //       }
 //   },
   components: {
-    VueMomentsAgo
+    VueMomentsAgo,
+    InviteComponent,
+    ProfileComponent,
+    UserComponent
   },
   methods: {
     /* Connect user with WS */
@@ -1136,93 +777,13 @@ export default {
         });
     },
 
-    /* Update user profile */
-    updateProfile() {
-      $(".invalid-feedback").remove();
-      axios
-        .post("/api/auth/update-profile", {token: localStorage.getItem("access_token"),
-        data: this.userProfile})
-        .then(response => {
-            if (response.data.errors) {
-                $.each(response.data.errors, function(key, value) {
-                $("#" + key)
-                    .closest(".form-group")
-                    .removeClass("has-success")
-                    .addClass("has-danger");
-                $("#" + key).after(
-                    '<span id="' +
-                    key +
-                    '_span" class="invalid-feedback" style="display:block;" role="alert"><strong>' +
-                    value +
-                    "</strong></span>"
-                );
-            });
-            } else {
-                Toast.fire({
-                    type: response.data.type,
-                    title: response.data.title
-                    });
-                console.log(response.data)
-            }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
-    /* Upload profile picture */
-    uploadPicture(elem) {
-      var file = event.target.files[0];
-      if(file.type.match(/image.*/)) {
-          var reader = new FileReader();
-          reader.onload = function (readerEvent) {
-              var image = new Image();
-              image.onload = function (imageEvent) {
-                  var canvas = document.createElement('canvas'),
-                      max_size_width = 500,
-                      max_size_height = 250,
-                      width = image.width,
-                      height = image.height;
-              
-                  if (width > height) {
-                      if (width > max_size_width) {
-                          height *= max_size_width / width;
-                          width = max_size_width;
-                      }
-                  } else {
-                      if (height > max_size_height) {
-                          width *= max_size_height / height;
-                          height = max_size_height;
-                      }
-                  }
-                  canvas.width = width;
-                  canvas.height = height;
-                  canvas.getContext('2d').drawImage(image, 0, 0, width, height);
-                  var dataUrl = canvas.toDataURL('image/jpeg');
-                  $('#pictureFile').attr('src', dataUrl);
-                    axios
-                        .post("/api/auth/update-profile", {token: localStorage.getItem("access_token"),
-                        picture: dataUrl})
-                            .then(response => {
-                                this.userProfile = response.data.user
-                                Toast.fire({
-                                    type: response.data.type,
-                                    title: response.data.title
-                                });
-                        })              
-              }
-              image.src = readerEvent.target.result;
-          }
-          reader.readAsDataURL(file);
-      }else{
-          alert('Image type is not supported');
-          $(elem).val('');
-      }
-    },
-
     /* Check online users */
     checkOnline(id) {
         return _.find(this.onlineUser,{id: id})
+    },
+
+    invite() {
+        $("#addFriends").appendTo("body").modal('show');
     },
 
     changeTab(type) {
