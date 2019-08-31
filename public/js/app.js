@@ -2972,12 +2972,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ["friendProfile"],
   mounted: function mounted() {// console.log("Component mounted.");
   },
-  methods: {
-    /* Close profile modal */
-    close: function close() {
-      this.$emit("update:friendProfile", "");
-    }
-  }
+  methods: {}
 });
 
 /***/ }),
@@ -3665,11 +3660,6 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {// console.log("Component mounted.");
   },
   methods: {
-    /* Change profile tab */
-    tabChange: function tabChange(name) {
-      this.$emit("update:tab", name);
-    },
-
     /* Update user profile */
     updateProfile: function updateProfile() {
       $(".invalid-feedback").remove();
@@ -72427,7 +72417,7 @@ var render = function() {
                   staticClass: "btn btn-light sidebar-close",
                   on: {
                     click: function($event) {
-                      return _vm.close()
+                      return _vm.$emit("update:friendProfile", "")
                     }
                   }
                 },
@@ -73273,7 +73263,7 @@ var render = function() {
                         },
                         on: {
                           click: function($event) {
-                            return _vm.tabChange("personal")
+                            return _vm.$emit("update:tab", "personal")
                           }
                         }
                       },
@@ -73295,7 +73285,7 @@ var render = function() {
                         },
                         on: {
                           click: function($event) {
-                            return _vm.tabChange("about")
+                            return _vm.$emit("update:tab", "about")
                           }
                         }
                       },
@@ -73317,7 +73307,7 @@ var render = function() {
                         },
                         on: {
                           click: function($event) {
-                            return _vm.tabChange("social-links")
+                            return _vm.$emit("update:tab", "social-links")
                           }
                         }
                       },
@@ -73339,7 +73329,7 @@ var render = function() {
                         },
                         on: {
                           click: function($event) {
-                            return _vm.tabChange("media")
+                            return _vm.$emit("update:tab", "media")
                           }
                         }
                       },

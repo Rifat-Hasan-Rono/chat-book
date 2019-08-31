@@ -1,2 +1,2 @@
 <?php
-define('PROFILE_PICTURE', 'public/profile-picture/'); //for user profile picture
+define('USER_MEDIA', 'public/user-media/'); //for user profile picture

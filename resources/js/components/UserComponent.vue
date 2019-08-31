@@ -24,7 +24,7 @@
                 class="nav-link active"
                 style="cursor: pointer;"
                 data-toggle="tab"
-                @click="tabChange('personal')"
+                @click="$emit('update:tab', 'personal')"
                 role="tab"
                 aria-controls="personal"
                 aria-selected="true"
@@ -35,7 +35,7 @@
                 class="nav-link"
                 style="cursor: pointer;"
                 data-toggle="tab"
-                @click="tabChange('about')"
+                @click="$emit('update:tab', 'about')"
                 role="tab"
                 aria-controls="about"
                 aria-selected="false"
@@ -46,7 +46,7 @@
                 class="nav-link"
                 style="cursor: pointer;"
                 data-toggle="tab"
-                @click="tabChange('social-links')"
+                @click="$emit('update:tab', 'social-links')"
                 role="tab"
                 aria-controls="social-links"
                 aria-selected="false"
@@ -57,7 +57,7 @@
                 class="nav-link"
                 style="cursor: pointer;"
                 data-toggle="tab"
-                @click="tabChange('media')"
+                @click="$emit('update:tab', 'media')"
                 role="tab"
                 aria-controls="social-links"
                 aria-selected="false"
@@ -419,11 +419,6 @@ export default {
     // console.log("Component mounted.");
   },
   methods: {
-    /* Change profile tab */
-    tabChange(name) {
-      this.$emit("update:tab", name);
-    },
-
     /* Update user profile */
     updateProfile() {
       $(".invalid-feedback").remove();

@@ -6,7 +6,7 @@
         <span>About</span>
         <ul class="list-inline">
           <li class="list-inline-item">
-            <a @click="close()" class="btn btn-light sidebar-close">
+            <a @click="$emit('update:friendProfile', '')" class="btn btn-light sidebar-close">
               <i class="ti-close"></i>
             </a>
           </li>
@@ -171,11 +171,6 @@ export default {
   mounted() {
     // console.log("Component mounted.");
   },
-  methods: {
-    /* Close profile modal */
-    close() {
-      this.$emit("update:friendProfile", "");
-    }
-  }
+  methods: {}
 };
 </script>
