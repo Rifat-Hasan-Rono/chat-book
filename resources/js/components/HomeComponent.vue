@@ -70,7 +70,7 @@
     <div class="content">
 
         <!-- sidebar group -->
-        <div class="sidebar-group">
+        <div class="sidebar-group" id="left-sidebar">
 
             <!-- Chats sidebar -->
             <div id="chats" class="sidebar active">
@@ -743,6 +743,9 @@ export default {
             $("#editProfileModal").appendTo("body").modal('show');
         }else{
             this.friendProfile = response.data
+            if(jQuery.browser.mobile){
+                $('#right-sidebar').addClass('mobile-open');
+            }
         }
         console.log(response.data);
         })
@@ -781,6 +784,9 @@ export default {
 
     changeTab(type) {
         this.sidebar = type
+        if(jQuery.browser.mobile){
+            $('#left-sidebar').addClass('mobile-open');
+        }
         if(type == 'friends_list'){
             $('div#chats').removeClass('active')
             $('div#friends').addClass('active')

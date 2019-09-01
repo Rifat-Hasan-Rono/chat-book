@@ -1,6 +1,6 @@
 <template>
   <!-- about -->
-  <div class="sidebar-group">
+  <div class="sidebar-group" id="right-sidebar">
     <div id="contact-information" class="sidebar" :class="{ 'active' : friendProfile != ''}">
       <header>
         <span>About</span>

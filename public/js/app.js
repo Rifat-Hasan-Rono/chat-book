@@ -2474,6 +2474,10 @@ __webpack_require__.r(__webpack_exports__);
           $("#editProfileModal").appendTo("body").modal('show');
         } else {
           _this15.friendProfile = response.data;
+
+          if (jQuery.browser.mobile) {
+            $('#right-sidebar').addClass('mobile-open');
+          }
         }
 
         console.log(response.data);
@@ -2514,6 +2518,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     changeTab: function changeTab(type) {
       this.sidebar = type;
+
+      if (jQuery.browser.mobile) {
+        $('#left-sidebar').addClass('mobile-open');
+      }
 
       if (type == 'friends_list') {
         $('div#chats').removeClass('active');
@@ -70932,19 +70940,262 @@ var render = function() {
         "div",
         { staticClass: "content" },
         [
-          _c("div", { staticClass: "sidebar-group" }, [
-            _c(
-              "div",
-              { staticClass: "sidebar active", attrs: { id: "chats" } },
-              [
-                _vm._m(2),
+          _c(
+            "div",
+            { staticClass: "sidebar-group", attrs: { id: "left-sidebar" } },
+            [
+              _c(
+                "div",
+                { staticClass: "sidebar active", attrs: { id: "chats" } },
+                [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _vm._m(3),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "sidebar-body" },
+                    _vm._l(_vm.conversationList, function(value) {
+                      return _c(
+                        "ul",
+                        {
+                          key: value.index,
+                          staticClass: "list-group list-group-flush"
+                        },
+                        [
+                          _c(
+                            "li",
+                            {
+                              staticClass: "list-group-item",
+                              class: {
+                                "open-chat": value.conv_id == _vm.conversationId
+                              }
+                            },
+                            [
+                              _c("div", [
+                                _c(
+                                  "figure",
+                                  {
+                                    staticClass: "avatar",
+                                    class: [
+                                      _vm.checkOnline(value.id)
+                                        ? "avatar-state-success"
+                                        : "avatar-state-warning"
+                                    ]
+                                  },
+                                  [
+                                    value.picture
+                                      ? _c("img", {
+                                          staticClass: "rounded-circle",
+                                          attrs: {
+                                            src:
+                                              "public/user-media/" +
+                                              value.id +
+                                              "/" +
+                                              value.picture
+                                          }
+                                        })
+                                      : _c(
+                                          "span",
+                                          {
+                                            staticClass:
+                                              "avatar-title bg-success rounded-circle"
+                                          },
+                                          [
+                                            _vm._v(
+                                              _vm._s(
+                                                value.first_name.charAt(0)
+                                              ) +
+                                                _vm._s(
+                                                  value.last_name.charAt(0)
+                                                )
+                                            )
+                                          ]
+                                        )
+                                  ]
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "users-list-body" }, [
+                                _c("h5", [
+                                  _vm._v(
+                                    _vm._s(value.first_name) +
+                                      " " +
+                                      _vm._s(value.last_name)
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("p", [_vm._v(_vm._s(value.last_message))]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "users-list-action action-toggle"
+                                  },
+                                  [
+                                    _c("div", { staticClass: "dropdown" }, [
+                                      _vm._m(4, true),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "dropdown-menu dropdown-menu-right"
+                                        },
+                                        [
+                                          _c(
+                                            "a",
+                                            {
+                                              staticClass: "dropdown-item",
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.getMessage(
+                                                    value.id,
+                                                    value.conv_id
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Open")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "a",
+                                            {
+                                              staticClass: "dropdown-item",
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.getProfile(
+                                                    value.id
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Profile")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "a",
+                                            { staticClass: "dropdown-item" },
+                                            [_vm._v("Add to archive")]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "a",
+                                            { staticClass: "dropdown-item" },
+                                            [_vm._v("Delete")]
+                                          )
+                                        ]
+                                      )
+                                    ])
+                                  ]
+                                )
+                              ])
+                            ]
+                          )
+                        ]
+                      )
+                    }),
+                    0
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "sidebar", attrs: { id: "friends" } }, [
+                _c("header", [
+                  _c("span", [_vm._v(_vm._s(_vm.friendListHeader))]),
+                  _vm._v(" "),
+                  _c("ul", { staticClass: "list-inline" }, [
+                    _vm.friendListHeader == "Receive Requests"
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-light",
+                              attrs: {
+                                "data-toggle": "tooltip",
+                                title: "Send Requests"
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.sentRequest()
+                                }
+                              }
+                            },
+                            [
+                              _c("i", {
+                                staticClass: "fa fa-user-circle-o",
+                                attrs: { "aria-hidden": "true" }
+                              })
+                            ]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.friendListHeader == "Find Friends" ||
+                    _vm.friendListHeader == "Send Requests"
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-light",
+                              attrs: {
+                                "data-toggle": "tooltip",
+                                title: "Receive Requests"
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.getRequest()
+                                }
+                              }
+                            },
+                            [
+                              _c("i", {
+                                staticClass: "fa fa-user-secret",
+                                attrs: { "aria-hidden": "true" }
+                              })
+                            ]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("li", { staticClass: "list-inline-item" }, [
+                      _vm.friendListHeader == "Find Friends"
+                        ? _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-light",
+                              attrs: {
+                                "data-toggle": "tooltip",
+                                title: "Send Invitation"
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.invite()
+                                }
+                              }
+                            },
+                            [
+                              _c("i", {
+                                staticClass: "fa fa-external-link",
+                                attrs: { "aria-hidden": "true" }
+                              })
+                            ]
+                          )
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _vm._m(5)
+                  ])
+                ]),
                 _vm._v(" "),
-                _vm._m(3),
+                _vm._m(6),
                 _vm._v(" "),
                 _c(
                   "div",
                   { staticClass: "sidebar-body" },
-                  _vm._l(_vm.conversationList, function(value) {
+                  _vm._l(_vm.friendList, function(value) {
                     return _c(
                       "ul",
                       {
@@ -70952,424 +71203,194 @@ var render = function() {
                         staticClass: "list-group list-group-flush"
                       },
                       [
-                        _c(
-                          "li",
-                          {
-                            staticClass: "list-group-item",
-                            class: {
-                              "open-chat": value.conv_id == _vm.conversationId
-                            }
-                          },
-                          [
-                            _c("div", [
-                              _c(
-                                "figure",
-                                {
-                                  staticClass: "avatar",
-                                  class: [
-                                    _vm.checkOnline(value.id)
-                                      ? "avatar-state-success"
-                                      : "avatar-state-warning"
-                                  ]
-                                },
-                                [
-                                  value.picture
-                                    ? _c("img", {
-                                        staticClass: "rounded-circle",
-                                        attrs: {
-                                          src:
-                                            "public/user-media/" +
-                                            value.id +
-                                            "/" +
-                                            value.picture
-                                        }
-                                      })
-                                    : _c(
-                                        "span",
-                                        {
-                                          staticClass:
-                                            "avatar-title bg-success rounded-circle"
-                                        },
-                                        [
-                                          _vm._v(
-                                            _vm._s(value.first_name.charAt(0)) +
-                                              _vm._s(value.last_name.charAt(0))
-                                          )
-                                        ]
-                                      )
-                                ]
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "users-list-body" }, [
-                              _c("h5", [
-                                _vm._v(
-                                  _vm._s(value.first_name) +
-                                    " " +
-                                    _vm._s(value.last_name)
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("p", [_vm._v(_vm._s(value.last_message))]),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  staticClass: "users-list-action action-toggle"
-                                },
-                                [
-                                  _c("div", { staticClass: "dropdown" }, [
-                                    _vm._m(4, true),
-                                    _vm._v(" "),
-                                    _c(
-                                      "div",
+                        _c("li", { staticClass: "list-group-item" }, [
+                          _c("div", [
+                            _c(
+                              "figure",
+                              { staticClass: "avatar mr-3 item-rtl" },
+                              [
+                                value.picture
+                                  ? _c("img", {
+                                      staticClass: "rounded-circle",
+                                      attrs: {
+                                        src:
+                                          "public/user-media/" +
+                                          value.id +
+                                          "/" +
+                                          value.picture
+                                      }
+                                    })
+                                  : _c(
+                                      "span",
                                       {
                                         staticClass:
-                                          "dropdown-menu dropdown-menu-right"
+                                          "avatar-title bg-info rounded-circle"
                                       },
                                       [
-                                        _c(
-                                          "a",
-                                          {
-                                            staticClass: "dropdown-item",
-                                            on: {
-                                              click: function($event) {
-                                                return _vm.getMessage(
-                                                  value.id,
-                                                  value.conv_id
-                                                )
-                                              }
-                                            }
-                                          },
-                                          [_vm._v("Open")]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "a",
-                                          {
-                                            staticClass: "dropdown-item",
-                                            on: {
-                                              click: function($event) {
-                                                return _vm.getProfile(value.id)
-                                              }
-                                            }
-                                          },
-                                          [_vm._v("Profile")]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "a",
-                                          { staticClass: "dropdown-item" },
-                                          [_vm._v("Add to archive")]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "a",
-                                          { staticClass: "dropdown-item" },
-                                          [_vm._v("Delete")]
+                                        _vm._v(
+                                          _vm._s(value.first_name.charAt(0)) +
+                                            _vm._s(value.last_name.charAt(0))
                                         )
                                       ]
                                     )
-                                  ])
-                                ]
+                              ]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "users-list-body" }, [
+                            _c("h5", [
+                              _vm._v(
+                                _vm._s(value.first_name) +
+                                  " " +
+                                  _vm._s(value.last_name)
                               )
-                            ])
-                          ]
-                        )
+                            ]),
+                            _vm._v(" "),
+                            _c("p", [
+                              _vm._v("Lorem ipsum dolor sitsdc sdcsdc sdcsdcs")
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "users-list-action action-toggle"
+                              },
+                              [
+                                _c("div", { staticClass: "dropdown" }, [
+                                  _vm._m(7, true),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "dropdown-menu dropdown-menu-right"
+                                    },
+                                    [
+                                      _c(
+                                        "a",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.getMessage(value.id, 0)
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Open")]
+                                      ),
+                                      _vm._v(" "),
+                                      _vm.friendListHeader == "Find Friends"
+                                        ? _c(
+                                            "a",
+                                            {
+                                              staticClass: "dropdown-item",
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.addFriend(value.id)
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Add Friend")]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _vm.friendListHeader == "Receive Requests"
+                                        ? _c(
+                                            "a",
+                                            {
+                                              staticClass: "dropdown-item",
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.confirmFriend(
+                                                    value.id
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Confirm Friend")]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _vm.friendListHeader == "Send Requests"
+                                        ? _c(
+                                            "a",
+                                            {
+                                              staticClass: "dropdown-item",
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.cancelRequest(
+                                                    value.id
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Cancel Request")]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _vm.friendListHeader == "Receive Requests"
+                                        ? _c(
+                                            "a",
+                                            {
+                                              staticClass: "dropdown-item",
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.deleteRequest(
+                                                    value.id
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Delete")]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _vm.friendListHeader == "Friends"
+                                        ? _c(
+                                            "a",
+                                            {
+                                              staticClass: "dropdown-item",
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.removeFriend(
+                                                    value.id
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Remove Friend")]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _c(
+                                        "a",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.getProfile(value.id)
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Profile")]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ]
+                            )
+                          ])
+                        ])
                       ]
                     )
                   }),
                   0
                 )
-              ]
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "sidebar", attrs: { id: "friends" } }, [
-              _c("header", [
-                _c("span", [_vm._v(_vm._s(_vm.friendListHeader))]),
-                _vm._v(" "),
-                _c("ul", { staticClass: "list-inline" }, [
-                  _vm.friendListHeader == "Receive Requests"
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-light",
-                            attrs: {
-                              "data-toggle": "tooltip",
-                              title: "Send Requests"
-                            },
-                            on: {
-                              click: function($event) {
-                                return _vm.sentRequest()
-                              }
-                            }
-                          },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-user-circle-o",
-                              attrs: { "aria-hidden": "true" }
-                            })
-                          ]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.friendListHeader == "Find Friends" ||
-                  _vm.friendListHeader == "Send Requests"
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-light",
-                            attrs: {
-                              "data-toggle": "tooltip",
-                              title: "Receive Requests"
-                            },
-                            on: {
-                              click: function($event) {
-                                return _vm.getRequest()
-                              }
-                            }
-                          },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-user-secret",
-                              attrs: { "aria-hidden": "true" }
-                            })
-                          ]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _c("li", { staticClass: "list-inline-item" }, [
-                    _vm.friendListHeader == "Find Friends"
-                      ? _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-light",
-                            attrs: {
-                              "data-toggle": "tooltip",
-                              title: "Send Invitation"
-                            },
-                            on: {
-                              click: function($event) {
-                                return _vm.invite()
-                              }
-                            }
-                          },
-                          [
-                            _c("i", {
-                              staticClass: "fa fa-external-link",
-                              attrs: { "aria-hidden": "true" }
-                            })
-                          ]
-                        )
-                      : _vm._e()
-                  ]),
-                  _vm._v(" "),
-                  _vm._m(5)
-                ])
               ]),
               _vm._v(" "),
-              _vm._m(6),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "sidebar-body" },
-                _vm._l(_vm.friendList, function(value) {
-                  return _c(
-                    "ul",
-                    {
-                      key: value.index,
-                      staticClass: "list-group list-group-flush"
-                    },
-                    [
-                      _c("li", { staticClass: "list-group-item" }, [
-                        _c("div", [
-                          _c(
-                            "figure",
-                            { staticClass: "avatar mr-3 item-rtl" },
-                            [
-                              value.picture
-                                ? _c("img", {
-                                    staticClass: "rounded-circle",
-                                    attrs: {
-                                      src:
-                                        "public/user-media/" +
-                                        value.id +
-                                        "/" +
-                                        value.picture
-                                    }
-                                  })
-                                : _c(
-                                    "span",
-                                    {
-                                      staticClass:
-                                        "avatar-title bg-info rounded-circle"
-                                    },
-                                    [
-                                      _vm._v(
-                                        _vm._s(value.first_name.charAt(0)) +
-                                          _vm._s(value.last_name.charAt(0))
-                                      )
-                                    ]
-                                  )
-                            ]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "users-list-body" }, [
-                          _c("h5", [
-                            _vm._v(
-                              _vm._s(value.first_name) +
-                                " " +
-                                _vm._s(value.last_name)
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("p", [
-                            _vm._v("Lorem ipsum dolor sitsdc sdcsdc sdcsdcs")
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "users-list-action action-toggle" },
-                            [
-                              _c("div", { staticClass: "dropdown" }, [
-                                _vm._m(7, true),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass:
-                                      "dropdown-menu dropdown-menu-right"
-                                  },
-                                  [
-                                    _c(
-                                      "a",
-                                      {
-                                        staticClass: "dropdown-item",
-                                        on: {
-                                          click: function($event) {
-                                            return _vm.getMessage(value.id, 0)
-                                          }
-                                        }
-                                      },
-                                      [_vm._v("Open")]
-                                    ),
-                                    _vm._v(" "),
-                                    _vm.friendListHeader == "Find Friends"
-                                      ? _c(
-                                          "a",
-                                          {
-                                            staticClass: "dropdown-item",
-                                            on: {
-                                              click: function($event) {
-                                                return _vm.addFriend(value.id)
-                                              }
-                                            }
-                                          },
-                                          [_vm._v("Add Friend")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    _vm.friendListHeader == "Receive Requests"
-                                      ? _c(
-                                          "a",
-                                          {
-                                            staticClass: "dropdown-item",
-                                            on: {
-                                              click: function($event) {
-                                                return _vm.confirmFriend(
-                                                  value.id
-                                                )
-                                              }
-                                            }
-                                          },
-                                          [_vm._v("Confirm Friend")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    _vm.friendListHeader == "Send Requests"
-                                      ? _c(
-                                          "a",
-                                          {
-                                            staticClass: "dropdown-item",
-                                            on: {
-                                              click: function($event) {
-                                                return _vm.cancelRequest(
-                                                  value.id
-                                                )
-                                              }
-                                            }
-                                          },
-                                          [_vm._v("Cancel Request")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    _vm.friendListHeader == "Receive Requests"
-                                      ? _c(
-                                          "a",
-                                          {
-                                            staticClass: "dropdown-item",
-                                            on: {
-                                              click: function($event) {
-                                                return _vm.deleteRequest(
-                                                  value.id
-                                                )
-                                              }
-                                            }
-                                          },
-                                          [_vm._v("Delete")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    _vm.friendListHeader == "Friends"
-                                      ? _c(
-                                          "a",
-                                          {
-                                            staticClass: "dropdown-item",
-                                            on: {
-                                              click: function($event) {
-                                                return _vm.removeFriend(
-                                                  value.id
-                                                )
-                                              }
-                                            }
-                                          },
-                                          [_vm._v("Remove Friend")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    _c(
-                                      "a",
-                                      {
-                                        staticClass: "dropdown-item",
-                                        on: {
-                                          click: function($event) {
-                                            return _vm.getProfile(value.id)
-                                          }
-                                        }
-                                      },
-                                      [_vm._v("Profile")]
-                                    )
-                                  ]
-                                )
-                              ])
-                            ]
-                          )
-                        ])
-                      ])
-                    ]
-                  )
-                }),
-                0
-              )
-            ]),
-            _vm._v(" "),
-            _vm._m(8)
-          ]),
+              _vm._m(8)
+            ]
+          ),
           _vm._v(" "),
           _c("div", { staticClass: "chat" }, [
             _vm.chatFriendProfile
@@ -72407,138 +72428,50 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "sidebar-group" }, [
-    _c(
-      "div",
-      {
-        staticClass: "sidebar",
-        class: { active: _vm.friendProfile != "" },
-        attrs: { id: "contact-information" }
-      },
-      [
-        _c("header", [
-          _c("span", [_vm._v("About")]),
-          _vm._v(" "),
-          _c("ul", { staticClass: "list-inline" }, [
-            _c("li", { staticClass: "list-inline-item" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-light sidebar-close",
-                  on: {
-                    click: function($event) {
-                      return _vm.$emit("update:friendProfile", "")
-                    }
-                  }
-                },
-                [_c("i", { staticClass: "ti-close" })]
-              )
-            ])
-          ])
-        ]),
-        _vm._v(" "),
-        _vm.friendProfile
-          ? _c("div", { staticClass: "sidebar-body" }, [
-              _c("div", { staticClass: "pl-4 pr-4 text-center" }, [
+  return _c(
+    "div",
+    { staticClass: "sidebar-group", attrs: { id: "right-sidebar" } },
+    [
+      _c(
+        "div",
+        {
+          staticClass: "sidebar",
+          class: { active: _vm.friendProfile != "" },
+          attrs: { id: "contact-information" }
+        },
+        [
+          _c("header", [
+            _c("span", [_vm._v("About")]),
+            _vm._v(" "),
+            _c("ul", { staticClass: "list-inline" }, [
+              _c("li", { staticClass: "list-inline-item" }, [
                 _c(
-                  "figure",
-                  { staticClass: "avatar avatar-state-danger avatar-xl mb-4" },
-                  [
-                    _vm.friendProfile.picture
-                      ? _c(
-                          "a",
-                          {
-                            attrs: {
-                              href:
-                                "public/user-media/" +
-                                _vm.friendProfile.id +
-                                "/" +
-                                _vm.friendProfile.picture,
-                              "data-lightbox": "image-1",
-                              "data-title": "Profile Picture"
-                            }
-                          },
-                          [
-                            _c("img", {
-                              staticClass: "rounded-circle",
-                              attrs: {
-                                src:
-                                  "public/user-media/" +
-                                  _vm.friendProfile.id +
-                                  "/" +
-                                  _vm.friendProfile.picture
-                              }
-                            })
-                          ]
-                        )
-                      : _c(
-                          "span",
-                          {
-                            staticClass: "avatar-title bg-info rounded-circle"
-                          },
-                          [
-                            _vm._v(
-                              _vm._s(_vm.friendProfile.first_name.charAt(0)) +
-                                _vm._s(_vm.friendProfile.last_name.charAt(0))
-                            )
-                          ]
-                        )
-                  ]
-                ),
-                _vm._v(" "),
-                _c("h5", { staticClass: "text-primary" }, [
-                  _vm._v(
-                    _vm._s(_vm.friendProfile.first_name) +
-                      " " +
-                      _vm._s(_vm.friendProfile.last_name)
-                  )
-                ]),
-                _vm._v(" "),
-                _c("p", { staticClass: "text-muted" }, [
-                  _vm._v(
-                    "Last seen: " +
-                      _vm._s(_vm._f("date")(_vm.friendProfile.last_seen))
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("hr"),
-              _vm._v(" "),
-              _c("div", { staticClass: "pl-4 pr-4" }, [
-                _c("h6", [_vm._v("About")]),
-                _vm._v(" "),
-                _c("p", { staticClass: "text-muted" }, [
-                  _vm._v(_vm._s(_vm.friendProfile.social.about))
-                ])
-              ]),
-              _vm._v(" "),
-              _c("hr"),
-              _vm._v(" "),
-              _c("div", { staticClass: "pl-4 pr-4" }, [
-                _c("h6", [_vm._v("Mobile")]),
-                _vm._v(" "),
-                _c("p", { staticClass: "text-muted" }, [
-                  _vm._v(_vm._s(_vm.friendProfile.mobile))
-                ])
-              ]),
-              _vm._v(" "),
-              _c("hr"),
-              _vm._v(" "),
-              _c("div", { staticClass: "pl-4 pr-4" }, [
-                _c("h6", [_vm._v("Media")]),
-                _vm._v(" "),
-                _c("div", { staticClass: "files" }, [
+                  "a",
+                  {
+                    staticClass: "btn btn-light sidebar-close",
+                    on: {
+                      click: function($event) {
+                        return _vm.$emit("update:friendProfile", "")
+                      }
+                    }
+                  },
+                  [_c("i", { staticClass: "ti-close" })]
+                )
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _vm.friendProfile
+            ? _c("div", { staticClass: "sidebar-body" }, [
+                _c("div", { staticClass: "pl-4 pr-4 text-center" }, [
                   _c(
-                    "ul",
-                    { staticClass: "list-inline" },
-                    _vm._l(JSON.parse(_vm.friendProfile.social.media), function(
-                      value
-                    ) {
-                      return _c(
-                        "li",
-                        { key: value.index, staticClass: "list-inline-item" },
-                        [
-                          _c(
+                    "figure",
+                    {
+                      staticClass: "avatar avatar-state-danger avatar-xl mb-4"
+                    },
+                    [
+                      _vm.friendProfile.picture
+                        ? _c(
                             "a",
                             {
                               attrs: {
@@ -72546,207 +72479,314 @@ var render = function() {
                                   "public/user-media/" +
                                   _vm.friendProfile.id +
                                   "/" +
-                                  value,
+                                  _vm.friendProfile.picture,
                                 "data-lightbox": "image-1",
-                                "data-title": "Media"
+                                "data-title": "Profile Picture"
                               }
                             },
                             [
+                              _c("img", {
+                                staticClass: "rounded-circle",
+                                attrs: {
+                                  src:
+                                    "public/user-media/" +
+                                    _vm.friendProfile.id +
+                                    "/" +
+                                    _vm.friendProfile.picture
+                                }
+                              })
+                            ]
+                          )
+                        : _c(
+                            "span",
+                            {
+                              staticClass: "avatar-title bg-info rounded-circle"
+                            },
+                            [
+                              _vm._v(
+                                _vm._s(_vm.friendProfile.first_name.charAt(0)) +
+                                  _vm._s(_vm.friendProfile.last_name.charAt(0))
+                              )
+                            ]
+                          )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("h5", { staticClass: "text-primary" }, [
+                    _vm._v(
+                      _vm._s(_vm.friendProfile.first_name) +
+                        " " +
+                        _vm._s(_vm.friendProfile.last_name)
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "text-muted" }, [
+                    _vm._v(
+                      "Last seen: " +
+                        _vm._s(_vm._f("date")(_vm.friendProfile.last_seen))
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("hr"),
+                _vm._v(" "),
+                _c("div", { staticClass: "pl-4 pr-4" }, [
+                  _c("h6", [_vm._v("About")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "text-muted" }, [
+                    _vm._v(_vm._s(_vm.friendProfile.social.about))
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("hr"),
+                _vm._v(" "),
+                _c("div", { staticClass: "pl-4 pr-4" }, [
+                  _c("h6", [_vm._v("Mobile")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "text-muted" }, [
+                    _vm._v(_vm._s(_vm.friendProfile.mobile))
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("hr"),
+                _vm._v(" "),
+                _c("div", { staticClass: "pl-4 pr-4" }, [
+                  _c("h6", [_vm._v("Media")]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "files" }, [
+                    _c(
+                      "ul",
+                      { staticClass: "list-inline" },
+                      _vm._l(
+                        JSON.parse(_vm.friendProfile.social.media),
+                        function(value) {
+                          return _c(
+                            "li",
+                            {
+                              key: value.index,
+                              staticClass: "list-inline-item"
+                            },
+                            [
                               _c(
-                                "figure",
-                                { staticClass: "avatar avatar-lg" },
+                                "a",
+                                {
+                                  attrs: {
+                                    href:
+                                      "public/user-media/" +
+                                      _vm.friendProfile.id +
+                                      "/" +
+                                      value,
+                                    "data-lightbox": "image-1",
+                                    "data-title": "Media"
+                                  }
+                                },
                                 [
-                                  _c("img", {
-                                    attrs: {
-                                      src:
-                                        "public/user-media/" +
-                                        _vm.friendProfile.id +
-                                        "/" +
-                                        value
-                                    }
-                                  })
+                                  _c(
+                                    "figure",
+                                    { staticClass: "avatar avatar-lg" },
+                                    [
+                                      _c("img", {
+                                        attrs: {
+                                          src:
+                                            "public/user-media/" +
+                                            _vm.friendProfile.id +
+                                            "/" +
+                                            value
+                                        }
+                                      })
+                                    ]
+                                  )
                                 ]
                               )
                             ]
                           )
-                        ]
-                      )
-                    }),
-                    0
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("hr"),
-              _vm._v(" "),
-              _c("div", { staticClass: "pl-4 pr-4" }, [
-                _c("h6", [_vm._v("City")]),
+                        }
+                      ),
+                      0
+                    )
+                  ])
+                ]),
                 _vm._v(" "),
-                _c("p", { staticClass: "text-muted" }, [
-                  _vm._v(_vm._s(_vm.friendProfile.city))
-                ])
-              ]),
-              _vm._v(" "),
-              _c("hr"),
-              _vm._v(" "),
-              _c("div", { staticClass: "pl-4 pr-4" }, [
-                _c("h6", [_vm._v("Website")]),
+                _c("hr"),
                 _vm._v(" "),
-                _c("p", [
-                  _c(
-                    "a",
-                    {
-                      attrs: {
-                        href: "http://" + _vm.friendProfile.social.website
-                      }
-                    },
-                    [_vm._v(_vm._s(_vm.friendProfile.social.website))]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("hr"),
-              _vm._v(" "),
-              _c("div", { staticClass: "pl-4 pr-4" }, [
-                _c("h6", [_vm._v("Social Links")]),
+                _c("div", { staticClass: "pl-4 pr-4" }, [
+                  _c("h6", [_vm._v("City")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "text-muted" }, [
+                    _vm._v(_vm._s(_vm.friendProfile.city))
+                  ])
+                ]),
                 _vm._v(" "),
-                _c("ul", { staticClass: "list-inline social-links" }, [
-                  _vm.friendProfile.social.facebook
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-floating btn-facebook",
-                            attrs: {
-                              href:
-                                "http://" + _vm.friendProfile.social.facebook
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-facebook" })]
-                        )
-                      ])
-                    : _vm._e(),
+                _c("hr"),
+                _vm._v(" "),
+                _c("div", { staticClass: "pl-4 pr-4" }, [
+                  _c("h6", [_vm._v("Website")]),
                   _vm._v(" "),
-                  _vm.friendProfile.social.twitter
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-floating btn-twitter",
-                            attrs: {
-                              href: "http://" + _vm.friendProfile.social.twitter
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-twitter" })]
-                        )
-                      ])
-                    : _vm._e(),
+                  _c("p", [
+                    _c(
+                      "a",
+                      {
+                        attrs: {
+                          href: "http://" + _vm.friendProfile.social.website
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.friendProfile.social.website))]
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("hr"),
+                _vm._v(" "),
+                _c("div", { staticClass: "pl-4 pr-4" }, [
+                  _c("h6", [_vm._v("Social Links")]),
                   _vm._v(" "),
-                  _vm.friendProfile.social.dribbble
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-floating btn-dribbble",
-                            attrs: {
-                              href:
-                                "http://" + _vm.friendProfile.social.dribbble
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-dribbble" })]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.friendProfile.social.whatsapp
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-floating btn-whatsapp",
-                            attrs: {
-                              href:
-                                "http://" + _vm.friendProfile.social.whatsapp
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-whatsapp" })]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.friendProfile.social.linkedin
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-floating btn-linkedin",
-                            attrs: {
-                              href:
-                                "http://" + _vm.friendProfile.social.linkedin
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-linkedin" })]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.friendProfile.social.google
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-floating btn-google",
-                            attrs: {
-                              href: "http://" + _vm.friendProfile.social.google
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-google" })]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.friendProfile.social.youtube
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-floating btn-youtube",
-                            attrs: {
-                              href: "http://" + _vm.friendProfile.social.youtube
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-youtube" })]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.friendProfile.social.instagram
-                    ? _c("li", { staticClass: "list-inline-item" }, [
-                        _c(
-                          "a",
-                          {
-                            staticClass:
-                              "btn btn-sm btn-floating btn-instagram",
-                            attrs: {
-                              href:
-                                "http://" + _vm.friendProfile.social.instagram
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-instagram" })]
-                        )
-                      ])
-                    : _vm._e()
-                ])
-              ]),
-              _vm._v(" "),
-              _c("hr"),
-              _vm._v(" "),
-              _vm._m(0)
-            ])
-          : _vm._e()
-      ]
-    )
-  ])
+                  _c("ul", { staticClass: "list-inline social-links" }, [
+                    _vm.friendProfile.social.facebook
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-floating btn-facebook",
+                              attrs: {
+                                href:
+                                  "http://" + _vm.friendProfile.social.facebook
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-facebook" })]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.friendProfile.social.twitter
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-floating btn-twitter",
+                              attrs: {
+                                href:
+                                  "http://" + _vm.friendProfile.social.twitter
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-twitter" })]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.friendProfile.social.dribbble
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-floating btn-dribbble",
+                              attrs: {
+                                href:
+                                  "http://" + _vm.friendProfile.social.dribbble
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-dribbble" })]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.friendProfile.social.whatsapp
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-floating btn-whatsapp",
+                              attrs: {
+                                href:
+                                  "http://" + _vm.friendProfile.social.whatsapp
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-whatsapp" })]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.friendProfile.social.linkedin
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-floating btn-linkedin",
+                              attrs: {
+                                href:
+                                  "http://" + _vm.friendProfile.social.linkedin
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-linkedin" })]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.friendProfile.social.google
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-sm btn-floating btn-google",
+                              attrs: {
+                                href:
+                                  "http://" + _vm.friendProfile.social.google
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-google" })]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.friendProfile.social.youtube
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-floating btn-youtube",
+                              attrs: {
+                                href:
+                                  "http://" + _vm.friendProfile.social.youtube
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-youtube" })]
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.friendProfile.social.instagram
+                      ? _c("li", { staticClass: "list-inline-item" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass:
+                                "btn btn-sm btn-floating btn-instagram",
+                              attrs: {
+                                href:
+                                  "http://" + _vm.friendProfile.social.instagram
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-instagram" })]
+                          )
+                        ])
+                      : _vm._e()
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("hr"),
+                _vm._v(" "),
+                _vm._m(0)
+              ])
+            : _vm._e()
+        ]
+      )
+    ]
+  )
 }
 var staticRenderFns = [
   function() {
