@@ -15,6 +15,7 @@
     <!-- Soho css -->
     <link rel="stylesheet" href="{{ asset('dist/css/soho.min.css') }}">
 
+    <link href="{{asset('lightbox/css/lightbox.css')}}" rel="stylesheet" />
 
     <!-- Fonts -->
     <!-- <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet"> -->
@@ -29,7 +30,7 @@
     <script src="{{ asset('dist/js/popper.min.js') }}"></script>
     <script src="{{ asset('dist/js/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('dist/js/soho.min.js') }}"></script>
-    <!-- <script src="{{ asset('dist/js/examples.js') }}"></script> -->
+    <script src="{{asset('lightbox/js/lightbox.js')}}"></script>
     <script>
         $("body").on('DOMSubtreeModified', "#app", function() {
             var current_path = window.location.pathname;

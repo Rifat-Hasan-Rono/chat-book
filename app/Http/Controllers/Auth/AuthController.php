@@ -96,6 +96,9 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Register new user & login.
+     */
     public function register(Request $request)
     {
         $validator = \Validator::make($request->all(), [
@@ -124,7 +127,9 @@ class AuthController extends Controller
         return response()->json($token->original);
     }
 
-
+    /**
+     * Update existing user profile.
+     */
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
@@ -135,8 +140,8 @@ class AuthController extends Controller
             }
             $target_dir = USER_MEDIA . $user->id . "/";
 
-            if (!empty($user->image)) {
-                unlink($target_dir . $user->id . $user->image);
+            if (!empty($user->picture)) {
+                unlink($target_dir . $user->picture);
             }
 
             $unique_name = time() . uniqid() . '.jpg';
@@ -144,8 +149,8 @@ class AuthController extends Controller
             $data = str_replace('data:image/jpeg;base64,', '', $request->picture);
             $data = base64_decode($data);
             file_put_contents($target_file, $data);
-            $user = User::where('id', $user->id)->update(['picture' => $unique_name]);
-            return response()->json(['type' => 'success', 'title' => 'Profile picture updated successfully']);
+            User::where('id', $user->id)->update(['picture' => $unique_name]);
+            return response()->json(['image' => $unique_name, 'type' => 'success', 'title' => 'Profile picture updated successfully']);
         } else {
             $validator = \Validator::make($request->data, [
                 'first_name' => 'required|string|max:25',
@@ -205,13 +210,14 @@ class AuthController extends Controller
 
         $social = Social::where('user_id', $user->id)->first();
         if (!$social->media) {
-            $social->media = json_encode([$imageName]);
+            $media_array = json_encode([$imageName]);
         } else {
             $social_media = array_merge([$imageName], json_decode($social->media));
-            $social->media = json_encode($social_media);
+            $media_array = json_encode($social_media);
         }
+        $social->media = $media_array;
         $social->save();
-        return response()->json(['success' => 'Updated']);
+        return response()->json(['media' => $media_array]);
     }
 
     /**

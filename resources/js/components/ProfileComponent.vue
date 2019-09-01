@@ -15,11 +15,17 @@
       <div class="sidebar-body" v-if="friendProfile">
         <div class="pl-4 pr-4 text-center">
           <figure class="avatar avatar-state-danger avatar-xl mb-4">
-            <img
+            <a
               v-if="friendProfile.picture"
-              v-bind:src="'public/profile-picture/' + friendProfile.id+ '/' + friendProfile.picture"
-              class="rounded-circle"
-            />
+              v-bind:href="'public/user-media/' + friendProfile.id+ '/' + friendProfile.picture"
+              data-lightbox="image-1"
+              data-title="Profile Picture"
+            >
+              <img
+                v-bind:src="'public/user-media/' + friendProfile.id+ '/' + friendProfile.picture"
+                class="rounded-circle"
+              />
+            </a>
             <span
               v-else
               class="avatar-title bg-info rounded-circle"
@@ -48,7 +54,11 @@
                 v-for="value in JSON.parse(friendProfile.social.media)"
                 :key="value.index"
               >
-                <a href="#">
+                <a
+                  v-bind:href="'public/user-media/' + friendProfile.id+ '/' + value"
+                  data-lightbox="image-1"
+                  data-title="Media"
+                >
                   <figure class="avatar avatar-lg">
                     <img v-bind:src="'public/user-media/' + friendProfile.id+ '/' + value" />
                   </figure>
@@ -168,9 +178,7 @@
 <script>
 export default {
   props: ["friendProfile"],
-  mounted() {
-    // console.log("Component mounted.");
-  },
+  mounted() {},
   methods: {}
 };
 </script>

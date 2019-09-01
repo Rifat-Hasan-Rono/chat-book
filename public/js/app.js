@@ -2121,18 +2121,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -2143,6 +2131,7 @@ __webpack_require__.r(__webpack_exports__);
   name: 'laravel-echo',
   data: function data() {
     return {
+      sidebar: 'chats',
       userId: '',
       tab: 'personal',
       conversationId: '',
@@ -2153,6 +2142,8 @@ __webpack_require__.r(__webpack_exports__);
       friendProfile: '',
       chatFriendProfile: '',
       userProfile: '',
+      userPicture: '',
+      userMedia: '',
       chatMessages: [],
       onlineUser: [],
       typing: ''
@@ -2478,6 +2469,8 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         if (id == 0) {
           _this15.userProfile = response.data;
+          _this15.userPicture = _this15.userProfile.picture;
+          _this15.userMedia = _this15.userProfile.social.media;
           $("#editProfileModal").appendTo("body").modal('show');
         } else {
           _this15.friendProfile = response.data;
@@ -2520,6 +2513,8 @@ __webpack_require__.r(__webpack_exports__);
       $("#addFriends").appendTo("body").modal('show');
     },
     changeTab: function changeTab(type) {
+      this.sidebar = type;
+
       if (type == 'friends_list') {
         $('div#chats').removeClass('active');
         $('div#friends').addClass('active');
@@ -2538,7 +2533,16 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     this.connect();
     this.bindChannels();
-    this.getConversationList(); //   Echo.private('chat-channel')
+    this.getConversationList();
+    $(document).on("click", '[data-toggle="lightbox"]', function (event) {
+      lightbox.option({
+        resizeDuration: 200,
+        wrapAround: true,
+        showImageNumberLabel: true,
+        fitImagesInViewport: true,
+        alwaysShowNavOnTouchDevices: true
+      });
+    }); //   Echo.private('chat-channel')
     //     .listen('ChatEvent', (e) => {
     //     this.chat.messages.push(e.message);  
     //     this.chat.user.push(e.message);  
@@ -2968,10 +2972,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["friendProfile"],
-  mounted: function mounted() {// console.log("Component mounted.");
-  },
+  mounted: function mounted() {},
   methods: {}
 });
 
@@ -3630,16 +3643,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["userProfile", "tab"],
+  props: ["userProfile", "tab", "userPicture", "userMedia"],
   name: "app",
   components: {
     vueDropzone: vue2_dropzone__WEBPACK_IMPORTED_MODULE_0___default.a
   },
   data: function data() {
     return {
+      picture: "",
       dropzoneOptions: {
         url: "/api/auth/store-media",
         headers: {
@@ -3687,6 +3705,7 @@ __webpack_require__.r(__webpack_exports__);
     /* Upload profile picture */
     uploadPicture: function uploadPicture(elem) {
       var file = event.target.files[0];
+      var self = this;
 
       if (file.type.match(/image.*/)) {
         var reader = new FileReader();
@@ -3722,6 +3741,7 @@ __webpack_require__.r(__webpack_exports__);
               token: localStorage.getItem("access_token"),
               picture: dataUrl
             }).then(function (response) {
+              self.$emit("update:userPicture", response.data.image);
               Toast.fire({
                 type: response.data.type,
                 title: response.data.title
@@ -3738,30 +3758,9 @@ __webpack_require__.r(__webpack_exports__);
         $(elem).val("");
       }
     },
-    afterComplete: function afterComplete(file) {
-      console.log(file.upload); // var count = $("#gallery-card li").length + 1;
-      // var image =
-      //   '<li class="list-inline-item" id="list_' +
-      //   count +
-      //   '">' +
-      //   '<figure class="avatar avatar-lg" style="position: relative;text-align: center;color: white;">' +
-      //   '<a href="public/user-media/' +
-      //   this.userProfile.id +
-      //   "/" +
-      //   file.upload.filename +
-      //   '"><img src="public/user-media/' +
-      //   this.userProfile.id +
-      //   "/" +
-      //   file.upload.filename +
-      //   '" /></a><span style="top:0;right: 10;position:  absolute;left: 50px;color: red;">' +
-      //   '<a v-on:click="removeFile(' +
-      //   file.upload.filename +
-      //   "," +
-      //   count +
-      //   ')"><i class="fa fa-times"aria-hidden="true"style="text-shadow: 0 0 3px #000;"></i></a></span>' +
-      //   "</figure>" +
-      //   "</a></li>";
-      // $("#mediaList").append(image);
+    afterSuccess: function afterSuccess(file, response) {
+      console.log(response.media);
+      this.$emit("update:userMedia", response.media);
     },
     removeFile: function removeFile(value, index) {
       axios.post("/api/auth/remove-media", {
@@ -70828,12 +70827,8 @@ var render = function() {
               _c(
                 "a",
                 {
-                  staticClass: "active",
-                  attrs: {
-                    "data-navigation-target": "chats",
-                    "data-toggle": "tooltip",
-                    title: "Chats"
-                  },
+                  class: { active: _vm.sidebar == "chats" },
+                  attrs: { "data-toggle": "tooltip", title: "Chats" },
                   on: {
                     click: function($event) {
                       return _vm.changeTab("chats")
@@ -70853,12 +70848,8 @@ var render = function() {
               _c(
                 "a",
                 {
-                  staticClass: "notifiy_badge",
-                  attrs: {
-                    "data-navigation-target": "friends",
-                    "data-toggle": "tooltip",
-                    title: "Friends"
-                  },
+                  class: { active: _vm.sidebar == "friends_list" },
+                  attrs: { "data-toggle": "tooltip", title: "Friends" },
                   on: {
                     click: function($event) {
                       return _vm.changeTab("friends_list")
@@ -70878,12 +70869,8 @@ var render = function() {
               _c(
                 "a",
                 {
-                  staticClass: "notifiy_badge",
-                  attrs: {
-                    "data-navigation-target": "friends",
-                    "data-toggle": "tooltip",
-                    title: "Find Friends"
-                  },
+                  class: { active: _vm.sidebar == "friends_request" },
+                  attrs: { "data-toggle": "tooltip", title: "Find Friends" },
                   on: {
                     click: function($event) {
                       return _vm.changeTab("friends_request")
@@ -70991,7 +70978,9 @@ var render = function() {
                                         staticClass: "rounded-circle",
                                         attrs: {
                                           src:
-                                            "public/profile-picture/" +
+                                            "public/user-media/" +
+                                            value.id +
+                                            "/" +
                                             value.picture
                                         }
                                       })
@@ -71207,7 +71196,9 @@ var render = function() {
                                     staticClass: "rounded-circle",
                                     attrs: {
                                       src:
-                                        "public/profile-picture/" +
+                                        "public/user-media/" +
+                                        value.id +
+                                        "/" +
                                         value.picture
                                     }
                                   })
@@ -71390,7 +71381,9 @@ var render = function() {
                             staticClass: "rounded-circle",
                             attrs: {
                               src:
-                                "public/profile-picture/" +
+                                "public/user-media/" +
+                                _vm.chatFriendProfile.id +
+                                "/" +
                                 _vm.chatFriendProfile.picture
                             }
                           })
@@ -71604,13 +71597,30 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("UserComponent", {
-        attrs: { userProfile: _vm.userProfile, tab: _vm.tab },
+        attrs: {
+          userProfile: _vm.userProfile,
+          userPicture: _vm.userPicture,
+          userMedia: _vm.userMedia,
+          tab: _vm.tab
+        },
         on: {
           "update:userProfile": function($event) {
             _vm.userProfile = $event
           },
           "update:user-profile": function($event) {
             _vm.userProfile = $event
+          },
+          "update:userPicture": function($event) {
+            _vm.userPicture = $event
+          },
+          "update:user-picture": function($event) {
+            _vm.userPicture = $event
+          },
+          "update:userMedia": function($event) {
+            _vm.userMedia = $event
+          },
+          "update:user-media": function($event) {
+            _vm.userMedia = $event
           },
           "update:tab": function($event) {
             _vm.tab = $event
@@ -72435,16 +72445,32 @@ var render = function() {
                   { staticClass: "avatar avatar-state-danger avatar-xl mb-4" },
                   [
                     _vm.friendProfile.picture
-                      ? _c("img", {
-                          staticClass: "rounded-circle",
-                          attrs: {
-                            src:
-                              "public/profile-picture/" +
-                              _vm.friendProfile.id +
-                              "/" +
-                              _vm.friendProfile.picture
-                          }
-                        })
+                      ? _c(
+                          "a",
+                          {
+                            attrs: {
+                              href:
+                                "public/user-media/" +
+                                _vm.friendProfile.id +
+                                "/" +
+                                _vm.friendProfile.picture,
+                              "data-lightbox": "image-1",
+                              "data-title": "Profile Picture"
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "rounded-circle",
+                              attrs: {
+                                src:
+                                  "public/user-media/" +
+                                  _vm.friendProfile.id +
+                                  "/" +
+                                  _vm.friendProfile.picture
+                              }
+                            })
+                          ]
+                        )
                       : _c(
                           "span",
                           {
@@ -72512,19 +72538,37 @@ var render = function() {
                         "li",
                         { key: value.index, staticClass: "list-inline-item" },
                         [
-                          _c("a", { attrs: { href: "#" } }, [
-                            _c("figure", { staticClass: "avatar avatar-lg" }, [
-                              _c("img", {
-                                attrs: {
-                                  src:
-                                    "public/user-media/" +
-                                    _vm.friendProfile.id +
-                                    "/" +
-                                    value
-                                }
-                              })
-                            ])
-                          ])
+                          _c(
+                            "a",
+                            {
+                              attrs: {
+                                href:
+                                  "public/user-media/" +
+                                  _vm.friendProfile.id +
+                                  "/" +
+                                  value,
+                                "data-lightbox": "image-1",
+                                "data-title": "Media"
+                              }
+                            },
+                            [
+                              _c(
+                                "figure",
+                                { staticClass: "avatar avatar-lg" },
+                                [
+                                  _c("img", {
+                                    attrs: {
+                                      src:
+                                        "public/user-media/" +
+                                        _vm.friendProfile.id +
+                                        "/" +
+                                        value
+                                    }
+                                  })
+                                ]
+                              )
+                            ]
+                          )
                         ]
                       )
                     }),
@@ -73446,7 +73490,7 @@ var render = function() {
                                     "figure",
                                     { staticClass: "avatar mr-3 item-rtl" },
                                     [
-                                      _vm.userProfile.picture
+                                      _vm.userPicture
                                         ? _c("img", {
                                             staticClass: "rounded-circle",
                                             attrs: {
@@ -73454,7 +73498,7 @@ var render = function() {
                                                 "public/user-media/" +
                                                 _vm.userProfile.id +
                                                 "/" +
-                                                _vm.userProfile.picture
+                                                _vm.userPicture
                                             }
                                           })
                                         : _c(
@@ -74078,12 +74122,12 @@ var render = function() {
                             id: "dropzone",
                             options: _vm.dropzoneOptions
                           },
-                          on: { "vdropzone-complete": _vm.afterComplete }
+                          on: { "vdropzone-success": _vm.afterSuccess }
                         }),
                         _vm._v(" "),
                         _c("br"),
                         _vm._v(" "),
-                        _c("h6", [_vm._v("Media")]),
+                        _vm.userMedia ? _c("h6", [_vm._v("Media")]) : _vm._e(),
                         _vm._v(" "),
                         _c("div", { staticClass: "files" }, [
                           _c(
@@ -74092,97 +74136,100 @@ var render = function() {
                               staticClass: "list-inline",
                               attrs: { id: "mediaList" }
                             },
-                            _vm._l(
-                              JSON.parse(_vm.userProfile.social.media),
-                              function(value, index) {
-                                return _c(
-                                  "li",
-                                  {
-                                    key: value.index,
-                                    staticClass: "list-inline-item",
-                                    attrs: { id: "list_" + index }
-                                  },
-                                  [
-                                    _c(
-                                      "figure",
-                                      {
-                                        staticClass: "avatar avatar-lg",
-                                        staticStyle: {
-                                          position: "relative",
-                                          "text-align": "center",
-                                          color: "white"
-                                        }
-                                      },
-                                      [
-                                        _c(
-                                          "a",
-                                          {
+                            _vm._l(JSON.parse(_vm.userMedia), function(
+                              value,
+                              index
+                            ) {
+                              return _c(
+                                "li",
+                                {
+                                  key: value.index,
+                                  staticClass: "list-inline-item",
+                                  attrs: { id: "list_" + index }
+                                },
+                                [
+                                  _c(
+                                    "figure",
+                                    {
+                                      staticClass: "avatar avatar-lg",
+                                      staticStyle: {
+                                        position: "relative",
+                                        "text-align": "center",
+                                        color: "white"
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "a",
+                                        {
+                                          attrs: {
+                                            href:
+                                              "public/user-media/" +
+                                              _vm.userProfile.id +
+                                              "/" +
+                                              value,
+                                            "data-lightbox": "image-1",
+                                            "data-title": "Media"
+                                          }
+                                        },
+                                        [
+                                          _c("img", {
                                             attrs: {
-                                              href:
+                                              src:
                                                 "public/user-media/" +
                                                 _vm.userProfile.id +
                                                 "/" +
                                                 value
                                             }
-                                          },
-                                          [
-                                            _c("img", {
+                                          })
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "span",
+                                        {
+                                          staticStyle: {
+                                            top: "0",
+                                            right: "10",
+                                            position: "absolute",
+                                            left: "50px",
+                                            color: "red"
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "a",
+                                            {
                                               attrs: {
-                                                src:
-                                                  "public/user-media/" +
-                                                  _vm.userProfile.id +
-                                                  "/" +
-                                                  value
-                                              }
-                                            })
-                                          ]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "span",
-                                          {
-                                            staticStyle: {
-                                              top: "0",
-                                              right: "10",
-                                              position: "absolute",
-                                              left: "50px",
-                                              color: "red"
-                                            }
-                                          },
-                                          [
-                                            _c(
-                                              "a",
-                                              {
-                                                on: {
-                                                  click: function($event) {
-                                                    return _vm.removeFile(
-                                                      value,
-                                                      index
-                                                    )
-                                                  }
-                                                }
+                                                "data-toggle": "tooltip",
+                                                title: "Remove"
                                               },
-                                              [
-                                                _c("i", {
-                                                  staticClass: "fa fa-times",
-                                                  staticStyle: {
-                                                    "text-shadow":
-                                                      "0 0 3px #000"
-                                                  },
-                                                  attrs: {
-                                                    "aria-hidden": "true"
-                                                  }
-                                                })
-                                              ]
-                                            )
-                                          ]
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                )
-                              }
-                            ),
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.removeFile(
+                                                    value,
+                                                    index
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _c("i", {
+                                                staticClass: "fa fa-times",
+                                                staticStyle: {
+                                                  "text-shadow": "0 0 3px #000"
+                                                },
+                                                attrs: { "aria-hidden": "true" }
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            }),
                             0
                           )
                         ])

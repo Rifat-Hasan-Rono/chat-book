@@ -27,17 +27,17 @@
                     </a>
                 </li>
                 <li>
-                    <a data-navigation-target="chats" class="active" @click="changeTab('chats')" data-toggle="tooltip" title="Chats">
+                    <a :class="{ 'active' : sidebar == 'chats'}" @click="changeTab('chats')" data-toggle="tooltip" title="Chats">
                         <i class="fa fa-commenting-o" aria-hidden="true"></i>
                     </a>
                 </li>
                 <li>
-                    <a data-navigation-target="friends" @click="changeTab('friends_list')" class="notifiy_badge" data-toggle="tooltip" title="Friends">
+                    <a :class="{ 'active' : sidebar == 'friends_list'}" @click="changeTab('friends_list')" data-toggle="tooltip" title="Friends">
                         <i class="fa fa-user-o" aria-hidden="true"></i>
                     </a>
                 </li>
                 <li>
-                    <a data-navigation-target="friends" @click="changeTab('friends_request')" class="notifiy_badge" data-toggle="tooltip" title="Find Friends">
+                    <a :class="{ 'active' : sidebar == 'friends_request'}" @click="changeTab('friends_request')" data-toggle="tooltip" title="Find Friends">
                         <i class="fa fa-user-plus" aria-hidden="true"></i>
                     </a>
                 </li>
@@ -94,22 +94,10 @@
                 </form>
                 <div class="sidebar-body">
                     <ul class="list-group list-group-flush" v-for="value in conversationList" :key="value.index">
-                        <!-- <li class="list-group-item">
-                            <figure class="avatar avatar-state-success">
-                                <img src="dist/media/img/man_avatar1.jpg" class="rounded-circle">
-                            </figure>
-                            <div class="users-list-body">
-                                <h5>Karl Hubane</h5>
-                                <p>Lorem ipsum dolor sitsdc sdcsdc sdcsdcs</p>
-                                <div class="users-list-action">
-                                    <div class="new-message-count">2</div>
-                                </div>
-                            </div>
-                        </li> -->
                         <li class="list-group-item" :class="{ 'open-chat' : value.conv_id == conversationId}">
                             <div >
                                 <figure class="avatar" :class="[checkOnline(value.id) ? 'avatar-state-success' : 'avatar-state-warning']">
-                                    <img v-if="value.picture" v-bind:src="'public/profile-picture/' + value.picture" class="rounded-circle">
+                                    <img v-if="value.picture" v-bind:src="'public/user-media/' + value.id+ '/' + value.picture" class="rounded-circle">
                                     <span v-else class="avatar-title bg-success rounded-circle">{{value.first_name.charAt(0)}}{{value.last_name.charAt(0)}}</span>
                                 </figure>
                             </div>
@@ -171,7 +159,7 @@
                         <li class="list-group-item">
                             <div>
                                 <figure class="avatar mr-3 item-rtl" >
-                                    <img v-if="value.picture" v-bind:src="'public/profile-picture/' + value.picture" class="rounded-circle">
+                                    <img v-if="value.picture" v-bind:src="'public/user-media/' + value.id+ '/' +value.picture" class="rounded-circle">
                                     <span v-else class="avatar-title bg-info rounded-circle">{{value.first_name.charAt(0)}}{{value.last_name.charAt(0)}}</span>
                                 </figure>
                             </div>
@@ -267,7 +255,7 @@
             <div class="chat-header" v-if="chatFriendProfile">
                 <div class="chat-header-user">
                     <figure class="avatar avatar-lg">
-                        <img v-if="chatFriendProfile.picture" v-bind:src="'public/profile-picture/' + chatFriendProfile.picture" class="rounded-circle">
+                        <img v-if="chatFriendProfile.picture" v-bind:src="'public/user-media/' + chatFriendProfile.id+ '/' +chatFriendProfile.picture" class="rounded-circle">
                         <span v-else class="avatar-title bg-success rounded-circle">{{chatFriendProfile.first_name.charAt(0)}}{{chatFriendProfile.last_name.charAt(0)}}</span>
                     </figure>
                     <div>
@@ -416,7 +404,7 @@
     <!-- ./ content -->
 
     <!-- edit profile modal -->
-    <UserComponent :userProfile.sync="userProfile" :tab.sync="tab"></UserComponent>    
+    <UserComponent :userProfile.sync="userProfile" :userPicture.sync="userPicture" :userMedia.sync="userMedia" :tab.sync="tab"></UserComponent>    
     <!-- ./ edit profile modal -->
     
     <!-- add friends modal -->
@@ -438,6 +426,7 @@ export default {
     name: 'laravel-echo',
     data() {
     return {
+      sidebar: 'chats',
       userId: '',
       tab: 'personal',
       conversationId: '',
@@ -448,6 +437,8 @@ export default {
       friendProfile: '',
       chatFriendProfile: '',
       userProfile: '',
+      userPicture: '',
+      userMedia: '',
       chatMessages: [],
       onlineUser: [],
       typing: ''
@@ -747,6 +738,8 @@ export default {
         .then(response => {
         if(id == 0){
             this.userProfile = response.data
+            this.userPicture = this.userProfile.picture
+            this.userMedia = this.userProfile.social.media
             $("#editProfileModal").appendTo("body").modal('show');
         }else{
             this.friendProfile = response.data
@@ -787,6 +780,7 @@ export default {
     },
 
     changeTab(type) {
+        this.sidebar = type
         if(type == 'friends_list'){
             $('div#chats').removeClass('active')
             $('div#friends').addClass('active')
@@ -807,6 +801,15 @@ export default {
         this.bindChannels()
         this.getConversationList()
 
+        $(document).on("click", '[data-toggle="lightbox"]', function(event) {
+            lightbox.option({
+                resizeDuration: 200,
+                wrapAround: true,
+                showImageNumberLabel: true,
+                fitImagesInViewport: true,
+                alwaysShowNavOnTouchDevices: true
+            });
+        });
     //   Echo.private('chat-channel')
     //     .listen('ChatEvent', (e) => {
     //     this.chat.messages.push(e.message);  

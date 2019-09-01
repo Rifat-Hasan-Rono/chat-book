@@ -110,8 +110,8 @@
                     <div>
                       <figure class="avatar mr-3 item-rtl">
                         <img
-                          v-if="userProfile.picture"
-                          v-bind:src="'public/user-media/' + userProfile.id+ '/' + userProfile.picture"
+                          v-if="userPicture"
+                          v-bind:src="'public/user-media/' + userProfile.id+ '/' + userPicture"
                           class="rounded-circle"
                         />
                         <span
@@ -346,15 +346,15 @@
                 :useCustomSlot="true"
                 id="dropzone"
                 :options="dropzoneOptions"
-                @vdropzone-complete="afterComplete"
+                @vdropzone-success="afterSuccess"
               ></vue-dropzone>
               <br />
-              <h6>Media</h6>
+              <h6 v-if="userMedia">Media</h6>
               <div class="files">
                 <ul class="list-inline" id="mediaList">
                   <li
                     class="list-inline-item"
-                    v-for="(value, index) in JSON.parse(userProfile.social.media)"
+                    v-for="(value, index) in JSON.parse(userMedia)"
                     :key="value.index"
                     :id="'list_'+index"
                   >
@@ -362,11 +362,15 @@
                       class="avatar avatar-lg"
                       style="position: relative;text-align: center;color: white;"
                     >
-                      <a v-bind:href="'public/user-media/' + userProfile.id+ '/' + value">
+                      <a
+                        v-bind:href="'public/user-media/' + userProfile.id+ '/' + value"
+                        data-lightbox="image-1"
+                        data-title="Media"
+                      >
                         <img v-bind:src="'public/user-media/' + userProfile.id+ '/' + value" />
                       </a>
                       <span style="top:0;right: 10;position:  absolute;left: 50px;color: red;">
-                        <a @click="removeFile(value,index)">
+                        <a @click="removeFile(value,index)" data-toggle="tooltip" title="Remove">
                           <i
                             class="fa fa-times"
                             aria-hidden="true"
@@ -392,13 +396,14 @@
 import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
 export default {
-  props: ["userProfile", "tab"],
+  props: ["userProfile", "tab", "userPicture", "userMedia"],
   name: "app",
   components: {
     vueDropzone: vue2Dropzone
   },
   data() {
     return {
+      picture: "",
       dropzoneOptions: {
         url: "/api/auth/store-media",
         headers: {
@@ -458,6 +463,7 @@ export default {
     /* Upload profile picture */
     uploadPicture(elem) {
       var file = event.target.files[0];
+      let self = this;
       if (file.type.match(/image.*/)) {
         var reader = new FileReader();
         reader.onload = function(readerEvent) {
@@ -490,7 +496,8 @@ export default {
                 token: localStorage.getItem("access_token"),
                 picture: dataUrl
               })
-              .then(response => {
+              .then(function(response) {
+                self.$emit("update:userPicture", response.data.image);
                 Toast.fire({
                   type: response.data.type,
                   title: response.data.title
@@ -506,32 +513,9 @@ export default {
       }
     },
 
-    afterComplete(file) {
-      console.log(file.upload);
-
-      // var count = $("#gallery-card li").length + 1;
-      // var image =
-      //   '<li class="list-inline-item" id="list_' +
-      //   count +
-      //   '">' +
-      //   '<figure class="avatar avatar-lg" style="position: relative;text-align: center;color: white;">' +
-      //   '<a href="public/user-media/' +
-      //   this.userProfile.id +
-      //   "/" +
-      //   file.upload.filename +
-      //   '"><img src="public/user-media/' +
-      //   this.userProfile.id +
-      //   "/" +
-      //   file.upload.filename +
-      //   '" /></a><span style="top:0;right: 10;position:  absolute;left: 50px;color: red;">' +
-      //   '<a v-on:click="removeFile(' +
-      //   file.upload.filename +
-      //   "," +
-      //   count +
-      //   ')"><i class="fa fa-times"aria-hidden="true"style="text-shadow: 0 0 3px #000;"></i></a></span>' +
-      //   "</figure>" +
-      //   "</a></li>";
-      // $("#mediaList").append(image);
+    afterSuccess(file, response) {
+      console.log(response.media);
+      this.$emit("update:userMedia", response.media);
     },
 
     removeFile(value, index) {
