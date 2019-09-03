@@ -41,4 +41,5 @@ Route::group(['middleware' => ['jwt.auth'], 'prefix' => 'auth'], function () {
     Route::post('conversation-list', 'ChatController@conversationList');
     Route::post('get-message', 'ChatController@getMessage');
     Route::post('send-message', 'ChatController@sendMessage');
+    Route::post('seen-message', 'ChatController@seenMessage');
 });

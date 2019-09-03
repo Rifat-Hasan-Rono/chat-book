@@ -11,7 +11,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Message;
 
-class ChatEvent implements ShouldBroadcast
+class SeenEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -36,8 +36,6 @@ class ChatEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return ['chat-channel'];
-        // return new PrivateChannel('chat-channel.' . $this->receiver);
         return new PrivateChannel('chat-channel');
     }
 }
