@@ -14,7 +14,10 @@
       </header>
       <div class="sidebar-body" v-if="friendProfile">
         <div class="pl-4 pr-4 text-center">
-          <figure class="avatar avatar-state-danger avatar-xl mb-4">
+          <figure
+            class="avatar avatar-xl mb-4"
+            :class="[checkOnline(friendProfile.id) ? 'avatar-state-success' : 'avatar-state-warning']"
+          >
             <a
               v-if="friendProfile.picture"
               v-bind:href="'public/user-media/' + friendProfile.id+ '/' + friendProfile.picture"
@@ -32,7 +35,8 @@
             >{{friendProfile.first_name.charAt(0)}}{{friendProfile.last_name.charAt(0)}}</span>
           </figure>
           <h5 class="text-primary">{{friendProfile.first_name}} {{friendProfile.last_name}}</h5>
-          <p class="text-muted">Last seen: {{friendProfile.last_seen | date}}</p>
+          <p class="text-muted" v-if="checkOnline(friendProfile.id)">Status: Online</p>
+          <p class="text-muted" v-else>Last seen: {{friendProfile.last_seen | date}}</p>
         </div>
         <hr />
         <div class="pl-4 pr-4">
@@ -177,7 +181,7 @@
 </template>
 <script>
 export default {
-  props: ["friendProfile"],
+  props: ["friendProfile", "checkOnline"],
   mounted() {},
   methods: {}
 };

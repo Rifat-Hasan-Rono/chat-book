@@ -2061,66 +2061,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -2149,14 +2089,15 @@ __webpack_require__.r(__webpack_exports__);
       typing: ''
     };
   },
-  //   watch: {
-  //       message(){
-  //           Echo.channel('chat-channel')
-  //           .whisper('typing', {
-  //           name: this.message
-  //         });
-  //       }
-  //   },
+  watch: {
+    message: function message() {
+      // this.echo.private('chat-channel.'+this.userId)
+      this.echo["private"]('chat-channel').whisper('typing', {
+        message: this.message,
+        conv: this.conversationId
+      });
+    }
+  },
   components: {
     VueMomentsAgo: vue_moments_ago__WEBPACK_IMPORTED_MODULE_2__["default"],
     InviteComponent: _InviteComponent_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -2216,19 +2157,46 @@ __webpack_require__.r(__webpack_exports__);
           _this2.onlineUser = _this2.onlineUser.filter(function (u) {
             return u != user;
           });
-        });
+        }); // this.echo.private('chat-channel.'+response.data.id)
 
-        _this2.echo["private"]('chat-channel.' + response.data.id).listen('ChatEvent', function (e) {
-          if (e.message.conversation_id == _this2.conversationId) {
-            _this2.chatMessages.push({
-              message: e.message.message,
-              user_id: e.message.user_id,
-              conversation_id: e.message.conversation_id,
-              created_at: e.message.created_at
-            });
+
+        _this2.echo["private"]('chat-channel').listen('ChatEvent', function (e) {
+          if (e.receiver == _this2.userId) {
+            _.find(_this2.conversationList, {
+              conv_id: e.message.conversation_id
+            }).message = e.message.message;
           }
 
-          console.log(e);
+          if (e.message.conversation_id == _this2.conversationId) {
+            _this2.chatMessages.push(e.message);
+
+            axios.post("/api/auth/seen-message", {
+              token: localStorage.getItem("access_token"),
+              id: e.message.id,
+              receiver_id: _this2.chatFriendProfile.id
+            });
+          } else {
+            if (e.receiver == _this2.userId) {
+              _.find(_this2.conversationList, {
+                conv_id: e.message.conversation_id
+              }).unseen += 1;
+            }
+          } // console.log(e);
+
+        }).listen('SeenEvent', function (e) {
+          if (e.message.conversation_id == _this2.conversationId) {
+            _.find(_this2.chatMessages, {
+              id: e.message.id
+            }).seen = e.message.seen;
+          }
+        }).listenForWhisper('typing', function (e) {
+          if (e.conv == _this2.conversationId) {
+            _this2.typing = e; // remove is typing indicator after 0.9s
+
+            setTimeout(function () {
+              this.typing = '';
+            }.bind(_this2), 900);
+          }
         });
       })["catch"](function (error) {
         console.log(error);
@@ -2326,27 +2294,30 @@ __webpack_require__.r(__webpack_exports__);
         if (_this8.conversationList) {
           _this8.chatFriendProfile = _this8.conversationList[0];
 
-          _this8.getMessage(_this8.chatFriendProfile.id, _this8.chatFriendProfile.conv_id);
-        }
+          _this8.getMessage(_this8.chatFriendProfile.id, _this8.chatFriendProfile.conv_id, _this8.conversationList[0].unseen);
+        } //   console.log(response.data);
 
-        console.log(response.data);
       })["catch"](function (error) {
         console.log(error);
       });
     },
 
     /* Get conversation with a user */
-    getMessage: function getMessage(id, conv_id) {
+    getMessage: function getMessage(id, conv_id, unseen) {
       var _this9 = this;
 
       this.conversationId = conv_id;
+      this.chatFriendProfile = _.find(this.conversationList, {
+        id: id
+      });
       axios.post("/api/auth/get-message", {
         token: localStorage.getItem("access_token"),
+        id: id,
         conv_id: conv_id,
-        id: id
+        unseen: unseen
       }).then(function (response) {
-        _this9.chatFriendProfile = response.data.friend;
-        _this9.chatMessages = response.data.conversations; // console.log(response.data);
+        // this.chatFriendProfile = response.data.friend
+        _this9.chatMessages = response.data; // console.log(response.data);
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2357,12 +2328,13 @@ __webpack_require__.r(__webpack_exports__);
       var _this10 = this;
 
       if (this.message.length > 0) {
-        this.chatMessages.push({
-          message: this.message,
-          user_id: this.userId,
-          conversation_id: this.conversationId,
-          created_at: new Date().getTime()
-        });
+        // this.chatMessages.push({
+        //     message: this.message,
+        //     user_id: this.userId,
+        //     conversation_id: this.conversationId,
+        //     seen: 0,
+        //     created_at: new Date().getTime()
+        //     })
         axios.post("/api/auth/send-message", {
           token: localStorage.getItem("access_token"),
           message: this.message,
@@ -2370,6 +2342,12 @@ __webpack_require__.r(__webpack_exports__);
           receiver_id: this.chatFriendProfile.id
         }).then(function (response) {
           _this10.message = "";
+
+          _this10.chatMessages.push(response.data);
+
+          _.find(_this10.conversationList, {
+            conv_id: response.data.conversation_id
+          }).message = response.data.message;
         })["catch"](function (error) {
           console.log(error);
         });
@@ -2478,9 +2456,8 @@ __webpack_require__.r(__webpack_exports__);
           if (jQuery.browser.mobile) {
             $('#right-sidebar').addClass('mobile-open');
           }
-        }
+        } // console.log(response.data);
 
-        console.log(response.data);
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2550,17 +2527,7 @@ __webpack_require__.r(__webpack_exports__);
         fitImagesInViewport: true,
         alwaysShowNavOnTouchDevices: true
       });
-    }); //   Echo.private('chat-channel')
-    //     .listen('ChatEvent', (e) => {
-    //     this.chat.messages.push(e.message);  
-    //     this.chat.user.push(e.message);  
-    //     console.log(e);
-    //     })
-    // .listenForWhisper('typing', (e) => {
-    //     if(e.name != ''){
-    //         this.typing = 'typing...';
-    //     }
-    // });
+    });
   }
 });
 
@@ -2990,8 +2957,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["friendProfile"],
+  props: ["friendProfile", "checkOnline"],
   mounted: function mounted() {},
   methods: {}
 });
@@ -71025,7 +70996,21 @@ var render = function() {
                                   )
                                 ]),
                                 _vm._v(" "),
-                                _c("p", [_vm._v(_vm._s(value.last_message))]),
+                                _c("p", [_vm._v(_vm._s(value.message))]),
+                                _vm._v(" "),
+                                value.unseen
+                                  ? _c(
+                                      "div",
+                                      { staticClass: "users-list-action" },
+                                      [
+                                        _c(
+                                          "div",
+                                          { staticClass: "new-message-count" },
+                                          [_vm._v(_vm._s(value.unseen))]
+                                        )
+                                      ]
+                                    )
+                                  : _vm._e(),
                                 _vm._v(" "),
                                 _c(
                                   "div",
@@ -71052,7 +71037,8 @@ var render = function() {
                                                 click: function($event) {
                                                   return _vm.getMessage(
                                                     value.id,
-                                                    value.conv_id
+                                                    value.conv_id,
+                                                    value.unseen
                                                   )
                                                 }
                                               }
@@ -71272,7 +71258,11 @@ var render = function() {
                                           staticClass: "dropdown-item",
                                           on: {
                                             click: function($event) {
-                                              return _vm.getMessage(value.id, 0)
+                                              return _vm.getMessage(
+                                                value.id,
+                                                0,
+                                                0
+                                              )
                                             }
                                           }
                                         },
@@ -71436,11 +71426,21 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _c("small", { staticClass: "text-muted" }, [
-                        _vm.checkOnline(_vm.chatFriendProfile.id)
-                          ? _c("i", [_vm._v("Online")])
-                          : _c("i", [_vm._v("Offline")])
-                      ])
+                      _vm.typing
+                        ? _c("small", { staticClass: "text-muted" }, [
+                            _c("i", { staticStyle: { color: "green" } }, [
+                              _vm._v("typing...")
+                            ])
+                          ])
+                        : _c("small", { staticClass: "text-muted" }, [
+                            _vm.checkOnline(_vm.chatFriendProfile.id)
+                              ? _c("i", { staticStyle: { color: "green" } }, [
+                                  _vm._v("Online")
+                                ])
+                              : _c("i", { staticStyle: { color: "red" } }, [
+                                  _vm._v("Offline")
+                                ])
+                          ])
                     ])
                   ]),
                   _vm._v(" "),
@@ -71544,10 +71544,11 @@ var render = function() {
                             _c("div", { staticClass: "message-action" }, [
                               _vm._v(
                                 "\r\n                            " +
-                                  _vm._s(_vm._f("date")(value.created_at)) +
-                                  " "
+                                  _vm._s(_vm._f("date")(value.created_at))
                               ),
-                              _c("i", { staticClass: "ti-double-check" })
+                              value.seen == 0
+                                ? _c("i", { staticClass: "ti-check" })
+                                : _c("i", { staticClass: "ti-double-check" })
                             ])
                           ]
                         )
@@ -71603,8 +71604,17 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("ProfileComponent", {
-            attrs: { friendProfile: _vm.friendProfile },
+            attrs: {
+              checkOnline: _vm.checkOnline,
+              friendProfile: _vm.friendProfile
+            },
             on: {
+              "update:checkOnline": function($event) {
+                _vm.checkOnline = $event
+              },
+              "update:check-online": function($event) {
+                _vm.checkOnline = $event
+              },
               "update:friendProfile": function($event) {
                 _vm.friendProfile = $event
               },
@@ -72467,7 +72477,12 @@ var render = function() {
                   _c(
                     "figure",
                     {
-                      staticClass: "avatar avatar-state-danger avatar-xl mb-4"
+                      staticClass: "avatar avatar-xl mb-4",
+                      class: [
+                        _vm.checkOnline(_vm.friendProfile.id)
+                          ? "avatar-state-success"
+                          : "avatar-state-warning"
+                      ]
                     },
                     [
                       _vm.friendProfile.picture
@@ -72520,12 +72535,16 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _c("p", { staticClass: "text-muted" }, [
-                    _vm._v(
-                      "Last seen: " +
-                        _vm._s(_vm._f("date")(_vm.friendProfile.last_seen))
-                    )
-                  ])
+                  _vm.checkOnline(_vm.friendProfile.id)
+                    ? _c("p", { staticClass: "text-muted" }, [
+                        _vm._v("Status: Online")
+                      ])
+                    : _c("p", { staticClass: "text-muted" }, [
+                        _vm._v(
+                          "Last seen: " +
+                            _vm._s(_vm._f("date")(_vm.friendProfile.last_seen))
+                        )
+                      ])
                 ]),
                 _vm._v(" "),
                 _c("hr"),

@@ -103,14 +103,17 @@
                             </div>
                             <div class="users-list-body">
                                 <h5>{{value.first_name}} {{value.last_name}}</h5>
-                                <p>{{value.last_message}}</p>
+                                <p>{{value.message}}</p>
+                                <div v-if="value.unseen" class="users-list-action">
+                                    <div class="new-message-count">{{value.unseen}}</div>
+                                </div>
                                 <div class="users-list-action action-toggle">
                                     <div class="dropdown">
                                         <a data-toggle="dropdown" href="#">
                                             <i class="ti-more"></i>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a @click="getMessage(value.id, value.conv_id)" class="dropdown-item">Open</a>
+                                            <a @click="getMessage(value.id, value.conv_id, value.unseen)" class="dropdown-item">Open</a>
                                             <a @click="getProfile(value.id)" class="dropdown-item">Profile</a>
                                             <a class="dropdown-item">Add to archive</a>
                                             <a class="dropdown-item">Delete</a>
@@ -172,7 +175,7 @@
                                             <i class="ti-more"></i>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a @click="getMessage(value.id,0)" class="dropdown-item">Open</a>
+                                            <a @click="getMessage(value.id,0,0)" class="dropdown-item">Open</a>
                                             <a @click="addFriend(value.id)"  v-if="friendListHeader == 'Find Friends'" class="dropdown-item">Add Friend</a>
                                             <a @click="confirmFriend(value.id)" v-if="friendListHeader == 'Receive Requests'" class="dropdown-item">Confirm Friend</a>
                                             <a @click="cancelRequest(value.id)" v-if="friendListHeader == 'Send Requests'" class="dropdown-item">Cancel Request</a>
@@ -260,9 +263,12 @@
                     </figure>
                     <div>
                         <h5>{{chatFriendProfile.first_name}} {{chatFriendProfile.last_name}}</h5>
-                        <small class="text-muted">
-                            <i v-if="checkOnline(chatFriendProfile.id)">Online</i>
-                            <i v-else>Offline</i>
+                        <small v-if="typing" class="text-muted">
+                            <i style="color:green;">typing...</i>
+                        </small>
+                        <small v-else class="text-muted">
+                            <i style="color:green;" v-if="checkOnline(chatFriendProfile.id)">Online</i>
+                            <i style="color:red;" v-else>Offline</i>
                         </small>
                     </div>
                 </div>
@@ -293,71 +299,8 @@
                     </ul>
                 </div>
             </div>
-            <div class="chat-body" v-chat-scroll> <!-- .no-message -->
-                <!--
-                <div class="no-message-container">
-                    <i class="fa fa-comments-o"></i>
-                    <p>Select a chat to read messages</p>
-                </div>
-                -->
+            <div class="chat-body" v-chat-scroll>
                 <div class="messages" v-for="value in chatMessages" :key="value.index">
-                    <!-- <div class="message-item outgoing-message">
-                        <div class="message-content">
-                            Hey, Maher! I'm waiting for you to send me the files.
-                        </div>
-                        <div class="message-action">
-                            Am 09:34 <i class="ti-double-check"></i>
-                        </div>
-                    </div>
-                    <div class="message-item">
-                        <div class="message-content">
-                            I'm sorry :( I'll send you as soon as possible.
-                        </div>
-                        <div class="message-action">
-                            Pm 14:20
-                        </div>
-                    </div>
-                    <div class="message-item outgoing-message">
-                        <div class="message-content">
-                            I'm waiting. Thank you :)
-                        </div>
-                        <div class="message-action">
-                            Pm 14:25 <i class="ti-double-check"></i>
-                        </div>
-                    </div>
-                    <div class="message-item">
-                        <div class="message-content">
-                            I'm sending files now.
-                        </div>
-                        <div class="message-action">
-                            Pm 14:20
-                        </div>
-                    </div>
-                    <div class="message-item">
-                        <div class="message-content message-file">
-                            <div class="file-icon">
-                                <i class="ti-file"></i>
-                            </div>
-                            <div>
-                                <div>important_documents.pdf <i class="text-muted small">(50KB)</i></div>
-                                <ul class="list-inline">
-                                    <li class="list-inline-item"><a href="#">Download</a></li>
-                                    <li class="list-inline-item"><a href="#">View</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="message-action">
-                            Pm 14:25
-                        </div>
-                    </div>
-                    <div class="message-item outgoing-message">
-                        <div class="message-content">
-                            Thank you so much. After I review these files, I will give you my opinion. If there's a problem, you can send it back. Good luck with!
-                        </div>
-                        <div class="message-action">
-                            Pm 14:50 <i title="Message could not be sent" class="ti-info-alt text-danger"></i>
-                        </div>
-                    </div> -->
                     <div v-if="chatFriendProfile.id == value.user_id" class="message-item">
                         <div class="message-content">{{value.message}}</div>
                         <div class="message-action">
@@ -368,12 +311,9 @@
                     <div v-else class="message-item outgoing-message">
                         <div class="message-content">{{value.message}}</div>
                         <div class="message-action">
-                            {{value.created_at | date}} <i class="ti-double-check"></i>
+                            {{value.created_at | date}}<i v-if="value.seen == 0" class="ti-check"></i> <i v-else class="ti-double-check"></i>
                         </div>
                     </div>
-                    <!-- <div v-if="typing !== ''" class="badge badge-pill">
-                        {{typing}}
-                    </div> -->
                 </div>
             </div>
             <div class="chat-footer">
@@ -397,7 +337,7 @@
         <!-- ./ chat -->
 
         <!-- about -->
-        <ProfileComponent :friendProfile.sync="friendProfile"></ProfileComponent>
+        <ProfileComponent :checkOnline.sync="checkOnline" :friendProfile.sync="friendProfile"></ProfileComponent>
         <!-- ./ about -->
 
     </div>
@@ -423,386 +363,418 @@ import InviteComponent from './InviteComponent.vue'
 import ProfileComponent from './ProfileComponent.vue'
 import UserComponent from './UserComponent.vue'
 export default {
-    name: 'laravel-echo',
-    data() {
-    return {
-      sidebar: 'chats',
-      userId: '',
-      tab: 'personal',
-      conversationId: '',
-      conversationList: '',
-      message: '',
-      friendList: '',
-      friendListHeader: '',
-      friendProfile: '',
-      chatFriendProfile: '',
-      userProfile: '',
-      userPicture: '',
-      userMedia: '',
-      chatMessages: [],
-      onlineUser: [],
-      typing: ''
-    };
-  },
-//   watch: {
-//       message(){
-//           Echo.channel('chat-channel')
-//           .whisper('typing', {
-//           name: this.message
-//         });
-//       }
-//   },
-  components: {
-    VueMomentsAgo,
-    InviteComponent,
-    ProfileComponent,
-    UserComponent
-  },
-  methods: {
-    /* Connect user with WS */
-    connect(){
-    if(!this.echo){
-        this.echo = new Echo({
-            broadcaster: 'pusher',
-            key: 'c3c2e3700ece86a11862',
-            cluster: 'ap1',
-            forceTLS: true,
-            authEndpoint: '/broadcasting/auth',
-            auth: {
-                headers: {
-                Authorization: null
-                }
-            },
-        })
-            this.echo.connector.pusher.connection.bind('connected', (event) => this.connect(event))
-            this.echo.connector.pusher.connection.bind('disconnected', () => this.disconnect())
+        name: 'laravel-echo',
+        data() {
+        return {
+        sidebar: 'chats',
+        userId: '',
+        tab: 'personal',
+        conversationId: '',
+        conversationList: '',
+        message: '',
+        friendList: '',
+        friendListHeader: '',
+        friendProfile: '',
+        chatFriendProfile: '',
+        userProfile: '',
+        userPicture: '',
+        userMedia: '',
+        chatMessages: [],
+        onlineUser: [],
+        typing: ''
+        };
+    },
+
+    watch: {
+        message(){
+            // this.echo.private('chat-channel.'+this.userId)
+            this.echo.private('chat-channel')
+            .whisper('typing', {
+                message: this.message,
+                conv: this.conversationId
+            })
         }
-        this.echo.connector.pusher.config.auth.headers.Authorization = 'Bearer ' + localStorage.getItem("access_token")
-        this.echo.connector.pusher.connect()
     },
 
-    /* Disconnect the WS connection*/
-    disconnect(){
-        if(!this.echo) return
-        this.echo.disconnect()
+    components: {
+        VueMomentsAgo,
+        InviteComponent,
+        ProfileComponent,
+        UserComponent
     },
 
-    /* Connect user with user to the channel */
-    bindChannels(){
-        axios
-        .post("/api/auth/me" , {token: localStorage.getItem("access_token")})
-        .then(response => {
-            this.userId = response.data.id
-            this.echo.join('notification-channel')
-                .here((users) => {
-                    this.onlineUser = users
-                })
-                .joining((user) => {
-                    this.onlineUser.push(user)
-                })
-                .leaving((user) => {
-                    this.onlineUser = this.onlineUser.filter(u => u != user)
-                });
- 
-            this.echo.private('chat-channel.'+response.data.id)
-            .listen('ChatEvent', (e) => {
-                if(e.message.conversation_id == this.conversationId){
-                    this.chatMessages.push({
-                        message: e.message.message,
-                        user_id: e.message.user_id,
-                        conversation_id: e.message.conversation_id,
-                        created_at: e.message.created_at
-                    }) 
-                }
-                console.log(e);
-            });
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
+    methods: {
+        /* Connect user with WS */
+        connect(){
+        if(!this.echo){
+            this.echo = new Echo({
+                broadcaster: 'pusher',
+                key: 'c3c2e3700ece86a11862',
+                cluster: 'ap1',
+                forceTLS: true,
+                authEndpoint: '/broadcasting/auth',
+                auth: {
+                    headers: {
+                    Authorization: null
+                    }
+                },
+            })
+                this.echo.connector.pusher.connection.bind('connected', (event) => this.connect(event))
+                this.echo.connector.pusher.connection.bind('disconnected', () => this.disconnect())
+            }
+            this.echo.connector.pusher.config.auth.headers.Authorization = 'Bearer ' + localStorage.getItem("access_token")
+            this.echo.connector.pusher.connect()
+        },
 
-    /* Log Out current user and clear everything */
-    logout() {
-      axios
-        .post("/api/auth/logout" , {token: localStorage.getItem("access_token")})
-        .then(response => {
-          this.disconnect()
-          this.$router.push("/login");
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("pusherTransportTLS");
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
+        /* Disconnect the WS connection*/
+        disconnect(){
+            if(!this.echo) return
+            this.echo.disconnect()
+        },
 
-    /* Get list of all user whom are not connected */
-    findFriends() {
-      axios
-        .post("/api/auth/find-friends" , {token: localStorage.getItem("access_token")})
-        .then(response => {
-          this.friendList = response.data
-          this.friendListHeader = 'Find Friends'
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
-    /* Get list of all friend */    
-    getFriends() {
-      axios
-        .post("/api/auth/get-friends" , {token: localStorage.getItem("access_token")})
-        .then(response => {
-          this.friendList = response.data
-          this.friendListHeader = 'Friends'
-          console.log(this.friendList);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
-    /* Get list of friend request sent by other user */
-    getRequest() {
-      axios
-        .post("/api/auth/get-request" , {token: localStorage.getItem("access_token")})
-        .then(response => {
-          this.friendList = response.data
-          this.friendListHeader = 'Receive Requests'
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
-    /* Get list of friend request sent to other user */    
-    sentRequest() {
-      axios
-        .post("/api/auth/sent-request" , {token: localStorage.getItem("access_token")})
-        .then(response => {
-          this.friendList = response.data
-          this.friendListHeader = 'Send Requests'
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
-    /* Get list of message with chat friend */
-    getConversationList() {
-      axios
-        .post("/api/auth/conversation-list" , {token: localStorage.getItem("access_token")})
-        .then(response => {
-          this.conversationList = response.data
-          if(this.conversationList){
-              this.chatFriendProfile = this.conversationList[0]
-              this.getMessage(this.chatFriendProfile.id, this.chatFriendProfile.conv_id)
-          }
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    
-    /* Get conversation with a user */
-    getMessage(id, conv_id) {
-        this.conversationId = conv_id
-        axios
-        .post("/api/auth/get-message" , {
-            token: localStorage.getItem("access_token"),
-            conv_id: conv_id,
-            id: id
-        })
-        .then(response => {
-            this.chatFriendProfile = response.data.friend
-            this.chatMessages = response.data.conversations;
-            // console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
-    /* Send message to a specific user */
-    sendMessage() {
-        if(this.message.length > 0){
-            this.chatMessages.push({
-                message: this.message,
-                user_id: this.userId,
-                conversation_id: this.conversationId,
-                created_at: new Date().getTime()
-                })
+        /* Connect user with user to the channel */
+        bindChannels(){
             axios
-            .post("/api/auth/send-message" , {
-                token: localStorage.getItem("access_token"),
-                message: this.message,
-                conv_id: this.conversationId,
-                receiver_id: this.chatFriendProfile.id
-                })
+            .post("/api/auth/me" , {token: localStorage.getItem("access_token")})
             .then(response => {
-                this.message = "";   
+                this.userId = response.data.id
+                this.echo.join('notification-channel')
+                    .here((users) => {
+                        this.onlineUser = users
+                    })
+                    .joining((user) => {
+                        this.onlineUser.push(user)
+                    })
+                    .leaving((user) => {
+                        this.onlineUser = this.onlineUser.filter(u => u != user)
+                    });
+    
+                // this.echo.private('chat-channel.'+response.data.id)
+                this.echo.private('chat-channel')
+                .listen('ChatEvent', (e) => {
+                    if(e.receiver == this.userId){
+                    _.find(this.conversationList, { conv_id: e.message.conversation_id }).message = e.message.message;
+                    }
+                    if(e.message.conversation_id == this.conversationId){
+                        this.chatMessages.push(e.message) 
+                        axios
+                            .post("/api/auth/seen-message" , {
+                                token: localStorage.getItem("access_token"),
+                                id: e.message.id,
+                                receiver_id: this.chatFriendProfile.id
+                            })
+                    }else{
+                        if(e.receiver == this.userId){
+                            _.find(this.conversationList, { conv_id: e.message.conversation_id }).unseen += 1;
+                        }
+                    }
+                    // console.log(e);
+                })
+                .listen('SeenEvent', (e) => {
+                    if(e.message.conversation_id == this.conversationId){
+                        _.find(this.chatMessages, { id: e.message.id }).seen = e.message.seen;
+                    }
+                })
+                .listenForWhisper('typing', (e) => {
+                    if(e.conv == this.conversationId){
+                        this.typing = e;
+                        // remove is typing indicator after 0.9s
+                        setTimeout(function() {this.typing = ''}.bind(this), 900);
+                    }
+                });
             })
             .catch(error => {
             console.log(error);
             });
-        }
-    },
+        },
 
-    /* Sent friend request to a user */
-    addFriend(id) {
-      axios
-        .post("/api/auth/add-friend" , {token: localStorage.getItem("access_token"),
-        id: id})
-        .then(response => {
-          this.changeTab('friends_request')
-          Toast.fire({
-              type: response.data.type,
-              title: response.data.title
+        /* Log Out current user and clear everything */
+        logout() {
+            axios
+                .post("/api/auth/logout" , {token: localStorage.getItem("access_token")})
+                .then(response => {
+                this.disconnect()
+                this.$router.push("/login");
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("pusherTransportTLS");
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Get list of all user whom are not connected */
+        findFriends() {
+            axios
+                .post("/api/auth/find-friends" , {token: localStorage.getItem("access_token")})
+                .then(response => {
+                this.friendList = response.data
+                this.friendListHeader = 'Find Friends'
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Get list of all friend */    
+        getFriends() {
+            axios
+                .post("/api/auth/get-friends" , {token: localStorage.getItem("access_token")})
+                .then(response => {
+                this.friendList = response.data
+                this.friendListHeader = 'Friends'
+                console.log(this.friendList);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Get list of friend request sent by other user */
+        getRequest() {
+            axios
+                .post("/api/auth/get-request" , {token: localStorage.getItem("access_token")})
+                .then(response => {
+                this.friendList = response.data
+                this.friendListHeader = 'Receive Requests'
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Get list of friend request sent to other user */    
+        sentRequest() {
+            axios
+                .post("/api/auth/sent-request" , {token: localStorage.getItem("access_token")})
+                .then(response => {
+                this.friendList = response.data
+                this.friendListHeader = 'Send Requests'
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Get list of message with chat friend */
+        getConversationList() {
+            axios
+                .post("/api/auth/conversation-list" , {token: localStorage.getItem("access_token")})
+                .then(response => {
+                this.conversationList = response.data
+                if(this.conversationList){
+                    this.chatFriendProfile = this.conversationList[0]
+                    this.getMessage(this.chatFriendProfile.id, this.chatFriendProfile.conv_id,this.conversationList[0].unseen)
+                }
+                //   console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+        
+        /* Get conversation with a user */
+        getMessage(id, conv_id, unseen) {
+            this.conversationId = conv_id
+            this.chatFriendProfile = _.find(this.conversationList, { id: id })
+            axios
+            .post("/api/auth/get-message" , {
+                token: localStorage.getItem("access_token"),
+                id: id,
+                conv_id: conv_id,
+                unseen: unseen
+            })
+            .then(response => {
+                // this.chatFriendProfile = response.data.friend
+                this.chatMessages = response.data;
+                // console.log(response.data);
+            })
+            .catch(error => {
+            console.log(error);
             });
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
+        },
 
-    /* Accept friend request from a user */
-    confirmFriend(id) {
-      axios
-        .post("/api/auth/confirm-friend" , {token: localStorage.getItem("access_token"),
-        id: id})
-        .then(response => {
-        //   this.changeTab('friends_request')
-          this.getRequest()
-          Toast.fire({
-              type: response.data.type,
-              title: response.data.title
+        /* Send message to a specific user */
+        sendMessage() {
+            if(this.message.length > 0){
+                // this.chatMessages.push({
+                //     message: this.message,
+                //     user_id: this.userId,
+                //     conversation_id: this.conversationId,
+                //     seen: 0,
+                //     created_at: new Date().getTime()
+                //     })
+                axios
+                .post("/api/auth/send-message" , {
+                    token: localStorage.getItem("access_token"),
+                    message: this.message,
+                    conv_id: this.conversationId,
+                    receiver_id: this.chatFriendProfile.id
+                    })
+                .then(response => {
+                    this.message = "";  
+                    this.chatMessages.push(response.data) 
+                    _.find(this.conversationList, { conv_id: response.data.conversation_id }).message = response.data.message;
+                })
+                .catch(error => {
+                console.log(error);
+                });
+            }
+        },
+
+        /* Sent friend request to a user */
+        addFriend(id) {
+            axios
+                .post("/api/auth/add-friend" , {token: localStorage.getItem("access_token"),
+                id: id})
+                .then(response => {
+                this.changeTab('friends_request')
+                Toast.fire({
+                    type: response.data.type,
+                    title: response.data.title
+                    });
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Accept friend request from a user */
+        confirmFriend(id) {
+            axios
+                .post("/api/auth/confirm-friend" , {token: localStorage.getItem("access_token"),
+                id: id})
+                .then(response => {
+                //   this.changeTab('friends_request')
+                this.getRequest()
+                Toast.fire({
+                    type: response.data.type,
+                    title: response.data.title
+                    });
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Remove a user from friend list */
+        removeFriend(id) {
+            axios
+                .post("/api/auth/remove-friend" , {token: localStorage.getItem("access_token"),
+                id: id})
+                .then(response => {
+                //   this.changeTab('friends_request')
+                this.getFriends()
+                Toast.fire({
+                    type: response.data.type,
+                    title: response.data.title
+                    });
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Cancel a friend request sent to a user */
+        cancelRequest(id) {
+            axios
+                .post("/api/auth/cancel-request" , {token: localStorage.getItem("access_token"),
+                id: id})
+                .then(response => {
+                //   this.changeTab('friends_request')
+                this.sentRequest()
+                Toast.fire({
+                    type: response.data.type,
+                    title: response.data.title
+                    });
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
+
+        /* Get profile of a registered user */
+        getProfile(id) {
+            axios
+            .post("/api/auth/get-profile" , {token: localStorage.getItem("access_token"),
+            id: id})
+            .then(response => {
+            if(id == 0){
+                this.userProfile = response.data
+                this.userPicture = this.userProfile.picture
+                this.userMedia = this.userProfile.social.media
+                $("#editProfileModal").appendTo("body").modal('show');
+            }else{
+                this.friendProfile = response.data
+                if(jQuery.browser.mobile){
+                    $('#right-sidebar').addClass('mobile-open');
+                }
+            }
+            // console.log(response.data);
+            })
+            .catch(error => {
+            console.log(error);
             });
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
+        },
 
-    /* Remove a user from friend list */
-    removeFriend(id) {
-      axios
-        .post("/api/auth/remove-friend" , {token: localStorage.getItem("access_token"),
-        id: id})
-        .then(response => {
-        //   this.changeTab('friends_request')
-          this.getFriends()
-          Toast.fire({
-              type: response.data.type,
-              title: response.data.title
-            });
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
+        /* Delete a friend request sent by other user */
+        deleteRequest(id) {
+            axios
+                .post("/api/auth/delete-request" , {token: localStorage.getItem("access_token"),
+                id: id})
+                .then(response => {
+                //   this.changeTab('friends_request')
+                this.getRequest()
+                Toast.fire({
+                    type: response.data.type,
+                    title: response.data.title
+                    });
+                console.log(response.data);
+                })
+                .catch(error => {
+                console.log(error);
+                });
+        },
 
-    /* Cancel a friend request sent to a user */
-    cancelRequest(id) {
-      axios
-        .post("/api/auth/cancel-request" , {token: localStorage.getItem("access_token"),
-        id: id})
-        .then(response => {
-        //   this.changeTab('friends_request')
-          this.sentRequest()
-          Toast.fire({
-              type: response.data.type,
-              title: response.data.title
-            });
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
+        /* Check online users */
+        checkOnline(id) {
+            return _.find(this.onlineUser,{id: id})
+        },
 
-    /* Get profile of a registered user */
-    getProfile(id) {
-        axios
-        .post("/api/auth/get-profile" , {token: localStorage.getItem("access_token"),
-        id: id})
-        .then(response => {
-        if(id == 0){
-            this.userProfile = response.data
-            this.userPicture = this.userProfile.picture
-            this.userMedia = this.userProfile.social.media
-            $("#editProfileModal").appendTo("body").modal('show');
-        }else{
-            this.friendProfile = response.data
+        invite() {
+            $("#addFriends").appendTo("body").modal('show');
+        },
+
+        changeTab(type) {
+            this.sidebar = type
             if(jQuery.browser.mobile){
-                $('#right-sidebar').addClass('mobile-open');
+                $('#left-sidebar').addClass('mobile-open');
+            }
+            if(type == 'friends_list'){
+                $('div#chats').removeClass('active')
+                $('div#friends').addClass('active')
+                this.getFriends()
+            }else if(type == 'friends_request'){
+                $('div#chats').removeClass('active')
+                $('div#friends').addClass('active')
+                this.findFriends()
+            }else{
+                $('div#friends').removeClass('active')
+                $('div#chats').addClass('active')
+                this.getConversationList()
             }
         }
-        console.log(response.data);
-        })
-        .catch(error => {
-        console.log(error);
-        });
     },
 
-    /* Delete a friend request sent by other user */
-    deleteRequest(id) {
-      axios
-        .post("/api/auth/delete-request" , {token: localStorage.getItem("access_token"),
-        id: id})
-        .then(response => {
-        //   this.changeTab('friends_request')
-          this.getRequest()
-          Toast.fire({
-              type: response.data.type,
-              title: response.data.title
-            });
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-
-    /* Check online users */
-    checkOnline(id) {
-        return _.find(this.onlineUser,{id: id})
-    },
-
-    invite() {
-        $("#addFriends").appendTo("body").modal('show');
-    },
-
-    changeTab(type) {
-        this.sidebar = type
-        if(jQuery.browser.mobile){
-            $('#left-sidebar').addClass('mobile-open');
-        }
-        if(type == 'friends_list'){
-            $('div#chats').removeClass('active')
-            $('div#friends').addClass('active')
-            this.getFriends()
-        }else if(type == 'friends_request'){
-            $('div#chats').removeClass('active')
-            $('div#friends').addClass('active')
-            this.findFriends()
-        }else{
-            $('div#friends').removeClass('active')
-            $('div#chats').addClass('active')
-            this.getConversationList()
-        }
-    }
-  },
-  mounted() {
+    mounted() {
         this.connect()
         this.bindChannels()
         this.getConversationList()
@@ -816,17 +788,6 @@ export default {
                 alwaysShowNavOnTouchDevices: true
             });
         });
-    //   Echo.private('chat-channel')
-    //     .listen('ChatEvent', (e) => {
-    //     this.chat.messages.push(e.message);  
-    //     this.chat.user.push(e.message);  
-    //     console.log(e);
-    //     })
-        // .listenForWhisper('typing', (e) => {
-        //     if(e.name != ''){
-        //         this.typing = 'typing...';
-        //     }
-        // });
-  }
+    }
 };
 </script>
