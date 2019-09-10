@@ -29,7 +29,7 @@ class FriendController extends Controller
             $receiver->get_request = json_encode($get_request);
         }
         $receiver->save();
-        return response()->json(['type' => 'success', 'title' => 'Friend request sent successfully']);
+        return response()->json(['type' => 'success', 'title' => 'Friend request sent successfully'], 200);
     }
     /**
      * Confirm friend request.
@@ -64,7 +64,7 @@ class FriendController extends Controller
             $sender->sent_request = json_encode($sent_request_values);
         }
         $sender->save();
-        return response()->json(['type' => 'success', 'title' => 'Friend request accepted']);
+        return response()->json(['type' => 'success', 'title' => 'Friend request accepted'], 200);
     }
     /**
      * Remove from friend list.
@@ -87,7 +87,7 @@ class FriendController extends Controller
             $receiver->friend_list = json_encode($receiver_friend_list_values);
         }
         $receiver->save();
-        return response()->json(['type' => 'success', 'title' => 'Removed friend successfully']);
+        return response()->json(['type' => 'success', 'title' => 'Removed friend successfully'], 200);
     }
     /**
      * Get all whom get friend request by user.
@@ -168,7 +168,7 @@ class FriendController extends Controller
             $receiver->get_request = json_encode($get_request_values);
         }
         $receiver->save();
-        return response()->json(['type' => 'success', 'title' => 'Friend request cancelled']);
+        return response()->json(['type' => 'success', 'title' => 'Friend request cancelled'], 200);
     }
     /**
      * Delete friend request sent by an user.
@@ -191,7 +191,7 @@ class FriendController extends Controller
             $sender->sent_request = json_encode($sent_request_values);
         }
         $sender->save();
-        return response()->json(['type' => 'success', 'title' => 'Friend request deleted']);
+        return response()->json(['type' => 'success', 'title' => 'Friend request deleted'], 200);
     }
 
     /**

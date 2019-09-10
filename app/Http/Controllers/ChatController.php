@@ -70,7 +70,7 @@ class ChatController extends Controller
         $message->seen = 0;
         $message->save();
         event(new ChatEvent($message, $request->receiver_id));
-        return response()->json($message);
+        return response()->json($message->id);
     }
 
 

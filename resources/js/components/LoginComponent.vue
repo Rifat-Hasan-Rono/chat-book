@@ -128,6 +128,7 @@
 </template>
 
 <script>
+import { STATUS_CODES } from "http";
 export default {
   data() {
     return {
@@ -138,17 +139,14 @@ export default {
   methods: {
     login() {
       $(".invalid-feedback").remove();
+      Swal.showLoading();
       axios
         .post("/api/auth/login", {
           email: this.email,
           password: this.password
         })
         .then(response => {
-          if (response.data.error) {
-            $("h5").after(
-              '<h5 class="invalid-feedback" style="display:block;" role="alert"><strong>Email or Password does not match</strong></h5>'
-            );
-          } else if (response.data.errors) {
+          if (response.data.errors) {
             $.each(response.data.errors, function(key, value) {
               $("#" + key)
                 .closest(".form-group")
@@ -165,6 +163,7 @@ export default {
           } else {
             localStorage.setItem("access_token", response.data.access_token);
             this.$router.push("/home");
+            Swal.hideLoading();
             Toast.fire({
               type: "success",
               title: "Signed in successfully"
@@ -172,7 +171,13 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
+          if (error.response.status == 401) {
+            Swal.hideLoading();
+            Toast.fire({
+              type: "error",
+              title: "Email or Password does not match"
+            });
+          }
         });
     }
   }

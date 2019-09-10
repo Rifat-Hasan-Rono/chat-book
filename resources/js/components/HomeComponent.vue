@@ -168,7 +168,7 @@
                             </div>
                             <div class="users-list-body">
                                 <h5>{{value.first_name}} {{value.last_name}}</h5>
-                                <p>Lorem ipsum dolor sitsdc sdcsdc sdcsdcs</p>
+                                <p>{{value.about}}</p>
                                 <div class="users-list-action action-toggle">
                                     <div class="dropdown">
                                         <a data-toggle="dropdown" href="#">
@@ -453,7 +453,7 @@ export default {
                 this.echo.private('chat-channel')
                 .listen('ChatEvent', (e) => {
                     if(e.receiver == this.userId){
-                    _.find(this.conversationList, { conv_id: e.message.conversation_id }).message = e.message.message;
+                        _.find(this.conversationList, { conv_id: e.message.conversation_id }).message = e.message.message;
                     }
                     if(e.message.conversation_id == this.conversationId){
                         this.chatMessages.push(e.message) 
@@ -484,7 +484,8 @@ export default {
                 });
             })
             .catch(error => {
-            console.log(error);
+            // console.log(error);
+                this.sweetAlert(error.response.status)
             });
         },
 
@@ -493,14 +494,15 @@ export default {
             axios
                 .post("/api/auth/logout" , {token: localStorage.getItem("access_token")})
                 .then(response => {
-                this.disconnect()
-                this.$router.push("/login");
-                localStorage.removeItem("access_token");
-                localStorage.removeItem("pusherTransportTLS");
-                console.log(response.data);
+                    this.disconnect()
+                    this.$router.push("/login");
+                    localStorage.removeItem("access_token");
+                    localStorage.removeItem("pusherTransportTLS");
+                    this.sweetAlert(response.status, 'success', response.data.message)
+                    // console.log(response.data);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
                 });
         },
 
@@ -509,12 +511,12 @@ export default {
             axios
                 .post("/api/auth/find-friends" , {token: localStorage.getItem("access_token")})
                 .then(response => {
-                this.friendList = response.data
-                this.friendListHeader = 'Find Friends'
-                console.log(response.data);
+                    this.friendList = response.data
+                    this.friendListHeader = 'Find Friends'
+                    // console.log(response.data);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)                    
                 });
         },
 
@@ -523,26 +525,26 @@ export default {
             axios
                 .post("/api/auth/get-friends" , {token: localStorage.getItem("access_token")})
                 .then(response => {
-                this.friendList = response.data
-                this.friendListHeader = 'Friends'
-                console.log(this.friendList);
+                    this.friendList = response.data
+                    this.friendListHeader = 'Friends'
+                    // console.log(this.friendList);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
                 });
         },
 
         /* Get list of friend request sent by other user */
-        getRequest() {
+        getRequest() {  
             axios
                 .post("/api/auth/get-request" , {token: localStorage.getItem("access_token")})
                 .then(response => {
-                this.friendList = response.data
-                this.friendListHeader = 'Receive Requests'
-                console.log(response.data);
+                    this.friendList = response.data
+                    this.friendListHeader = 'Receive Requests'
+                    // console.log(response.data);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
                 });
         },
 
@@ -565,15 +567,16 @@ export default {
             axios
                 .post("/api/auth/conversation-list" , {token: localStorage.getItem("access_token")})
                 .then(response => {
-                this.conversationList = response.data
-                if(this.conversationList){
-                    this.chatFriendProfile = this.conversationList[0]
-                    this.getMessage(this.chatFriendProfile.id, this.chatFriendProfile.conv_id,this.conversationList[0].unseen)
-                }
+                    this.conversationList = response.data
+                    if(this.conversationList){
+                        this.chatFriendProfile = this.conversationList[0]
+                        this.getMessage(this.chatFriendProfile.id, this.chatFriendProfile.conv_id,this.conversationList[0].unseen)
+                    }
                 //   console.log(response.data);
                 })
                 .catch(error => {
-                console.log(error);
+                    // console.log(error.response);
+                    this.sweetAlert(error.response.status)
                 });
         },
         
@@ -594,34 +597,40 @@ export default {
                 // console.log(response.data);
             })
             .catch(error => {
-            console.log(error);
+                this.sweetAlert(error.response.status)                
             });
         },
 
         /* Send message to a specific user */
         sendMessage() {
             if(this.message.length > 0){
-                // this.chatMessages.push({
-                //     message: this.message,
-                //     user_id: this.userId,
-                //     conversation_id: this.conversationId,
-                //     seen: 0,
-                //     created_at: new Date().getTime()
-                //     })
+                var message = this.message
+                var time = new Date().getTime()
+                _.find(this.conversationList, { conv_id: this.conversationId }).message = message;
+                this.message = "";  
+                this.chatMessages.push({
+                    id: '',
+                    message: message,
+                    user_id: this.userId,
+                    conversation_id: this.conversationId,
+                    seen: 0,
+                    created_at: time
+                    })
                 axios
                 .post("/api/auth/send-message" , {
                     token: localStorage.getItem("access_token"),
-                    message: this.message,
+                    message: message,
                     conv_id: this.conversationId,
                     receiver_id: this.chatFriendProfile.id
                     })
                 .then(response => {
-                    this.message = "";  
-                    this.chatMessages.push(response.data) 
-                    _.find(this.conversationList, { conv_id: response.data.conversation_id }).message = response.data.message;
+                    // this.message = "";  
+                    // this.chatMessages.push(response.data) 
+                    // _.find(this.conversationList, { conv_id: response.data.conversation_id }).message = response.data.message;
+                    _.find(this.chatMessages, { created_at: time }).id = response.data;
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
                 });
             }
         },
@@ -632,15 +641,13 @@ export default {
                 .post("/api/auth/add-friend" , {token: localStorage.getItem("access_token"),
                 id: id})
                 .then(response => {
-                this.changeTab('friends_request')
-                Toast.fire({
-                    type: response.data.type,
-                    title: response.data.title
-                    });
-                console.log(response.data);
+                    this.changeTab('friends_request')
+                    this.sweetAlert(response.status, response.data.type, response.data.title)
+                    // console.log(response);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
+                    // console.log(error.response);
                 });
         },
 
@@ -650,16 +657,13 @@ export default {
                 .post("/api/auth/confirm-friend" , {token: localStorage.getItem("access_token"),
                 id: id})
                 .then(response => {
-                //   this.changeTab('friends_request')
-                this.getRequest()
-                Toast.fire({
-                    type: response.data.type,
-                    title: response.data.title
-                    });
-                console.log(response.data);
+                    this.getRequest()
+                    this.sweetAlert(response.status, response.data.type, response.data.title)
+                    // console.log(response.data);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
+                    // console.log(error.response);
                 });
         },
 
@@ -669,16 +673,13 @@ export default {
                 .post("/api/auth/remove-friend" , {token: localStorage.getItem("access_token"),
                 id: id})
                 .then(response => {
-                //   this.changeTab('friends_request')
-                this.getFriends()
-                Toast.fire({
-                    type: response.data.type,
-                    title: response.data.title
-                    });
-                console.log(response.data);
+                    this.getFriends()
+                    this.sweetAlert(response.status, response.data.type, response.data.title)
+                    // console.log(response.data);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
+                    // console.log(error.response);
                 });
         },
 
@@ -688,16 +689,13 @@ export default {
                 .post("/api/auth/cancel-request" , {token: localStorage.getItem("access_token"),
                 id: id})
                 .then(response => {
-                //   this.changeTab('friends_request')
-                this.sentRequest()
-                Toast.fire({
-                    type: response.data.type,
-                    title: response.data.title
-                    });
-                console.log(response.data);
+                    this.sentRequest()
+                    this.sweetAlert(response.status, response.data.type, response.data.title)
+                    // console.log(response.data);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
+                    console.log(error.response);
                 });
         },
 
@@ -707,21 +705,22 @@ export default {
             .post("/api/auth/get-profile" , {token: localStorage.getItem("access_token"),
             id: id})
             .then(response => {
-            if(id == 0){
-                this.userProfile = response.data
-                this.userPicture = this.userProfile.picture
-                this.userMedia = this.userProfile.social.media
-                $("#editProfileModal").appendTo("body").modal('show');
-            }else{
-                this.friendProfile = response.data
-                if(jQuery.browser.mobile){
-                    $('#right-sidebar').addClass('mobile-open');
+                if(id == 0){
+                    this.userProfile = response.data
+                    this.userPicture = this.userProfile.picture
+                    this.userMedia = this.userProfile.social.media
+                    $("#editProfileModal").appendTo("body").modal('show');
+                }else{
+                    this.friendProfile = response.data
+                    if(jQuery.browser.mobile){
+                        $('#right-sidebar').addClass('mobile-open');
+                    }
                 }
-            }
             // console.log(response.data);
             })
             .catch(error => {
-            console.log(error);
+                this.sweetAlert(error.response.status)
+                // console.log(error.response);
             });
         },
 
@@ -731,16 +730,12 @@ export default {
                 .post("/api/auth/delete-request" , {token: localStorage.getItem("access_token"),
                 id: id})
                 .then(response => {
-                //   this.changeTab('friends_request')
-                this.getRequest()
-                Toast.fire({
-                    type: response.data.type,
-                    title: response.data.title
-                    });
-                console.log(response.data);
+                    this.getRequest()
+                    this.sweetAlert(response.status, response.data.type, response.data.title)
+                    // console.log(response.data);
                 })
                 .catch(error => {
-                console.log(error);
+                    this.sweetAlert(error.response.status)
                 });
         },
 
@@ -749,8 +744,26 @@ export default {
             return _.find(this.onlineUser,{id: id})
         },
 
+        /* Open email invitation modal */
         invite() {
             $("#addFriends").appendTo("body").modal('show');
+        },
+
+        /* Sweet alert notification */
+        sweetAlert(statusCode, alertType, alertTitle){
+            if (statusCode == 200) {
+                Toast.fire({
+                type: alertType,
+                title: alertTitle
+                });
+            }
+            else if (statusCode == 401) {
+                Toast.fire({
+                type: "error",
+                title: "Unauthorized"
+                });
+                this.$router.push("/login");
+            }
         },
 
         changeTab(type) {

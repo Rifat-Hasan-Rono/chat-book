@@ -41,8 +41,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized']);
-            // return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
         User::where('email', request(['email']))->update(['last_seen' => date('Y-m-d H:i:s')]);
         return $this->respondWithToken($token);

@@ -127,6 +127,7 @@ export default {
       $("form")
         .find("span")
         .remove();
+      Swal.showLoading();
       axios
         .post("/api/auth/register", {
           first_name: this.first_name,
@@ -136,6 +137,7 @@ export default {
           password: this.password
         })
         .then(response => {
+          Swal.hideLoading();
           if (response.data.errors) {
             $.each(response.data.errors, function(key, value) {
               $("#" + key)
